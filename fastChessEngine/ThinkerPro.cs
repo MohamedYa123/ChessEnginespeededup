@@ -17,6 +17,7 @@ namespace fastChessEngine
         public int bestmove;
         int depthhere = 0;
         int boardhere = 0;
+        List<string> sequencemoves = new List<string>();
         public double search(int side,int sidetomove,int depth,int board)
         {
             depthhere = depth;
@@ -30,6 +31,7 @@ namespace fastChessEngine
             }
             if (depth == depthM)
             {
+                branchesfound = 0;
                 for(int i = 0; i < totalnumberassign-1; i++)
                 {
                     if (i != board) {
@@ -42,6 +44,9 @@ namespace fastChessEngine
             int nummoves = board_getboardfeature(board, 5);
             for(int br = 0; br < nummoves; br++)
             {
+                if (depth == depthM)
+                { sequencemoves.Clear(); }
+                
                 int newboard = freeboard.Pop();
                 board_copyboard(board, newboard);
                 move_aplymove(newboard, br,board);

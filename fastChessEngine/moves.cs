@@ -132,7 +132,7 @@ namespace fastChessEngine
             {
                 return;
             }
-            if (pawn && (pawnside == 0 && y1 == 7) || (pawnside == 1 && y1 == 0))
+            if (pawn && (side == 0 && y1 == 7) || (side == 1 && y1 == 0))
             {
                 for(int i = 4; i >0; i--)
                 {
@@ -203,7 +203,7 @@ namespace fastChessEngine
                 piece_setpiece_feature(board, piece, 0, promotion);
             }
             pieceChangePosition(board, piece, col, row);
-            board_resetlongmovefirstpieces(board);
+            board_resetlongmovefirstpieces(board);//around 5% slower
             piece_setpiece_feature(board, piece, 6, longmove);
         }
         /// <summary>

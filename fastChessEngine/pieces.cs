@@ -77,6 +77,11 @@ namespace fastChessEngine
             var a = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             var col = pieces[a + 1];
             var row = pieces[a + 2];
+            int side = pieces[a + 4];
+            if (pieces[a] == 5)
+            {
+                check_setking(board,side, col, row);
+            }
             squaresetoccupy(board, piece, col, row);
         }
         void piece_removepiece(int board,int piece)
@@ -243,7 +248,7 @@ namespace fastChessEngine
                 return ;
             }
             
-            if (side == 0)
+            //if (side == 0)
             {
                 if ((side == 0&&white_o_o)|| (side == 1 && black_o_o))
                 {
@@ -256,7 +261,7 @@ namespace fastChessEngine
                         bool checkedblack = square_litefeature_extractor(part, 1) == 1;
                         bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
                         bool checkedwhite = square_litefeature_extractor(part, 0) == 1;
-                        if (tx < 2 || checkedblack || ocupiedblack||ocupiedwhite )
+                        if (tx < 2 || (side==0&& checkedblack)||(side==1 &&checkedwhite) || ocupiedblack||ocupiedwhite )
                         {
                             cs = false;
                             break;
@@ -266,8 +271,9 @@ namespace fastChessEngine
                     int exists = square_getsquare_feature(board, tx2, y, 4);
                     if (exists!=-1) {
                         bool rooktype = piece_getpiece_feature(board, exists, 0) == 1;
+                        bool sameside = piece_getpiece_feature(board, exists, 4) == side;
                         bool nevermovedrook = piece_getpiece_feature(board, exists, 5) == 1;
-                        if (cs && rooktype && nevermovedrook)
+                        if (cs && rooktype && nevermovedrook && sameside)
                         {
                             move_createmove(board, pointer, 0+side*2, -1, -1, x + 2, y, tx2 - 2, y,piece, exists, true, false, ref pointer,side);
                             // pushAndCalcForking(moves, m);
@@ -284,7 +290,7 @@ namespace fastChessEngine
                         bool checkedblack = square_litefeature_extractor(part, 1) == 1;
                         bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
                         bool checkedwhite = square_litefeature_extractor(part, 0) == 1;
-                        if (tx > 7 || checkedblack || ocupiedblack || ocupiedwhite)
+                        if (tx > 7 || (side == 0 && checkedblack) || (side == 1 && checkedwhite) || ocupiedblack || ocupiedwhite)
                         {
                             cs = false;
                             break;
@@ -296,7 +302,8 @@ namespace fastChessEngine
                     {
                         bool rooktype = piece_getpiece_feature(board, exists, 0) == 1;
                         bool nevermovedrook = piece_getpiece_feature(board, exists, 5) == 1;
-                        if (cs && rooktype && nevermovedrook)
+                        bool sameside = piece_getpiece_feature(board, exists, 4) == side;
+                        if (cs && rooktype && nevermovedrook && sameside)
                         {
                             
                             move_createmove(board, pointer, 1 + side * 2, -1, -1, x - 2, y, tx2+3, y,piece, exists, true, false, ref pointer,side);
@@ -327,7 +334,7 @@ namespace fastChessEngine
             var collow = piece_colcheck(board, side, x, y); // !colcheck();
             var diaglow_R = piece_diagonalcheckright(board, side, x, y);// !diagonal_right_check();
             var diaglow_L = piece_diagonalcheckleft(board, side, x, y);// !diagonal_left_check();
-            for (int i = 0; i < 8; i++)
+            for (int i = 1; i < 9; i++)
             {
                 int adx = -1;
                 int ady = -1;
@@ -680,7 +687,7 @@ namespace fastChessEngine
                 {
                     // m.longmove = true;
                     // moves.Push(m);
-                    move_createmove(board, pointer, -1, -1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer,side);
+                    move_createmove(board, pointer, -1, 1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer,side);
                 }
             }
            // move mm = new move();
@@ -802,7 +809,7 @@ namespace fastChessEngine
                     {
                         int pp = square_litefeature_extractor(part, 4);
                         bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
-                        bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 0;
+                        bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 1;
                         part_2 = pp;
                         if ((pawntype && longmovefirst) )
                         {
@@ -823,7 +830,7 @@ namespace fastChessEngine
                 if(ocupiedwhite){
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
-                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 0;
+                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 1;
                     part_2 = pp;
                     if (  (pawntype && longmovefirst))
                     {
@@ -853,7 +860,7 @@ namespace fastChessEngine
                 {
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
-                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 0;
+                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 1;
                     part_2 = pp;
                     if (  (pawntype && longmovefirst))
                     {
@@ -874,7 +881,7 @@ namespace fastChessEngine
                 {
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
-                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 0;
+                    bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 1;
                     part_2 = pp;
                     if (  (pawntype && longmovefirst))
                     {
@@ -1125,7 +1132,7 @@ namespace fastChessEngine
             int y = pieces[pointerP + 2];  //row
             int side = pieces[pointerP + 4];
             int aa = 1;
-            int bb = 0;
+            int bb = 1;
             //
             int a1 = -1;
             int a2 = 8;
@@ -1230,14 +1237,15 @@ namespace fastChessEngine
         //checks
         bool piece_rowcheck(int board,int side,int col,int row)
         {
-            int kingcol = check_getcheckfeature(board, side, 5);
-            if (kingcol != col)
+            int kingrow = check_getcheckfeature(board, side, 6);
+
+            if (kingrow != row)
             {
                 return true;//can never check from a row
             }
-            int kingrow = check_getcheckfeature(board, side, 6);
+            int kingcol = check_getcheckfeature(board, side, 5);
             side = 1 - side;
-            if (row < 7 && kingrow<row)
+            if (row < 7 && kingcol < col && row<7)
             {
                 var part = square_getpart(board, col, row + 1);
                 var rowleft = square_litefeature_extractor(part, 6 + side * 2)==1;
@@ -1250,13 +1258,24 @@ namespace fastChessEngine
                     {
                         rowleft = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (rowleft)
                 {
+                    for (int i = col, i2 = row-1; i2 > kingrow; i2--)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
-            else if (row >0 && kingrow > row)
+            else if (row >0 && kingcol > col && row>0)
             {
                 var part = square_getpart(board, col, row - 1);
                 var rowright = square_litefeature_extractor(part, 5 + side * 2) == 1;
@@ -1269,9 +1288,20 @@ namespace fastChessEngine
                     {
                         rowright = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (rowright)
                 {
+                    for (int i = col, i2 = row+1; i2 < kingrow; i2++)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
@@ -1279,14 +1309,14 @@ namespace fastChessEngine
         }
         bool piece_colcheck(int board,int side,int col,int row)
         {
-            int kingrow = check_getcheckfeature(board, side, 6);
-            if (kingrow != row)
+            int kingcol = check_getcheckfeature(board, side, 5);
+            if (kingcol != col)
             {
                 return true;//can never check from a row
             }
-            int kingcol = check_getcheckfeature(board, side, 5);
+            int kingrow = check_getcheckfeature(board, side, 6);
             side = 1 - side;
-            if (col < 7 && kingcol<col)
+            if (col < 7 && kingrow < row && col<7)
             {
              //   var coldown = square_getsquare_feature(board, col+1, row, 10 + side * 2)==1;
                 var part = square_getpart(board, col + 1, row);
@@ -1301,13 +1331,24 @@ namespace fastChessEngine
                     {
                         coldown = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (coldown)
                 {
+                    for (int i = col-1, i2 = row; i > kingcol; i--)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
-            else if (col >0 && kingcol > col)
+            else if (col >0 && kingrow > row && col>0)
             {
                 var part = square_getpart(board, col - 1, row);
                 var colup = square_litefeature_extractor(part, 9 + side * 2) == 1;
@@ -1321,9 +1362,20 @@ namespace fastChessEngine
                     {
                         colup = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (colup)
                 {
+                    for (int i = col+1, i2 = row; i < kingcol; i++)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
@@ -1334,7 +1386,7 @@ namespace fastChessEngine
             int kingrow = check_getcheckfeature(board, side, 6);
             int kingcol = check_getcheckfeature(board, side, 5);
             side = 1 - side;
-            if (kingcol - col == kingrow - row&&kingcol<col)
+            if (kingcol - col == kingrow - row&&kingcol<col&&col<7&&row<7)
             {
                 var part = square_getpart(board, col + 1, row+1);
                 var diagleftup = square_litefeature_extractor(part, 18 + side * 2) == 1;
@@ -1347,13 +1399,24 @@ namespace fastChessEngine
                     {
                         diagleftup = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (diagleftup)
                 {
+                    for (int i = col-1, i2 = row-1; i > kingcol&&i2>kingrow; i--,i2--)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
-            else if(kingcol - col == row-kingrow && kingcol < col)
+            else if(kingcol - col == row-kingrow && kingcol < col&&col<7&&row>0)
             {
                 var part = square_getpart(board, col + 1, row - 1);
                 var diagleftdown = square_litefeature_extractor(part, 17 + side * 2) == 1;
@@ -1367,9 +1430,20 @@ namespace fastChessEngine
                     {
                         diagleftdown = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (diagleftdown)
                 {
+                    for (int i = col-1, i2 = row+1; i > kingcol && i2 < kingrow; i--, i2++)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
@@ -1380,7 +1454,7 @@ namespace fastChessEngine
             int kingrow = check_getcheckfeature(board, side, 6);
             int kingcol = check_getcheckfeature(board, side, 5);
             side = 1 - side;
-            if (kingcol - col == kingrow - row && kingcol > col)
+            if (kingcol - col == kingrow - row && kingcol > col &&col>0&&row>0)
             {
                 var part = square_getpart(board, col - 1, row - 1);
                 var diagrightup = square_litefeature_extractor(part, 13 + side * 2) == 1;
@@ -1394,13 +1468,24 @@ namespace fastChessEngine
                     {
                         diagrightup = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (diagrightup)
                 {
+                    for (int i = col+1, i2 = row+1; i < kingcol && i2 < kingrow; i++, i2++)
+                    {
+                        if (square_getsquare_feature(board, i, i2, 4) != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }
-            else if(kingcol - col == row-kingrow && kingcol > col)
+            else if(kingcol - col == row-kingrow && kingcol > col && col>0 &&row<7)
             {
                 var part = square_getpart(board, col - 1, row + 1);
                 var diagrightdown = square_litefeature_extractor(part, 14 + side * 2) == 1;
@@ -1413,9 +1498,21 @@ namespace fastChessEngine
                     {
                         diagrightdown = true;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 if (diagrightdown)
                 {
+                    for (int i = col+1, i2 = row-1; i < kingcol && i2 > kingrow; i++, i2--)
+                    {
+                        var x = square_getsquare_feature(board, i, i2, 4);
+                        if (x != -1)
+                        {
+                            return true;
+                        }
+                    }
                     return false;
                 }
             }

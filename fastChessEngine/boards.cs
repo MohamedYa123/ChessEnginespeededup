@@ -188,11 +188,16 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
         public double board_eval(int board,int side)
         {
             double ans = 0;
-            for(int i = 0; i < 32; i++)
+            var d = 0;
+            for (int i = 0; i < 32; i++)
             {
                 if (piece_getpiece_feature(board, i, 3) != -1)
                 {
                     var a= piece_getvalue(board, i);
+                    if (a == 40)
+                    {
+                        d++;
+                    }
                     if (piece_getpiece_feature(board, i, 4) == side)
                     {
                         ans += a;
@@ -203,6 +208,17 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                     }
                 }
             }
+            if (d != 2)
+            {
+                var al = piece_getpiece_feature(board, 12, 3);
+                var aal = piece_getpiece_feature(board, 28, 3);
+                var aalk = piece_getpiece_feature(board, 28, 0);
+            }
+            else if (d == 2)
+            {
+
+            }
+
             return ans;
         }
         public void Board_init_board(int board)

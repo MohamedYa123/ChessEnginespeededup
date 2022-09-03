@@ -12,9 +12,9 @@ using System.Windows.Forms;
 namespace fastChessEngine
 {
    
-    public partial class Form1 : Form
+    public partial class Form2 : Form
     {
-        public Form1()
+        public Form2()
         {
             InitializeComponent();
         }
@@ -111,11 +111,13 @@ namespace fastChessEngine
         private void button5_Click(object sender, EventArgs e)
         {
             Stopwatch sp = new Stopwatch();
-            th.depthM = 6;
+            th.depthM =6;
+            th.board_setboardfeature(0, 5, 0);
             sp.Start();
             th.search(0, 0, th.depthM, 0);
             sp.Stop();
-            MessageBox.Show(th.branchesfound + " time : "+sp.ElapsedMilliseconds+" ms");
+            th.board_setboardfeature(0, 5, 0);
+            MessageBox.Show(th.branchesfound + " time : "+sp.ElapsedMilliseconds+" ms \n averagspeed : "+ th.branchesfound / sp.ElapsedMilliseconds + " knode/sec");
         }
     }
 

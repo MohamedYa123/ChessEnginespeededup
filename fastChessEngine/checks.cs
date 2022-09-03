@@ -90,14 +90,18 @@ namespace fastChessEngine
             int type = check_getcheckfeature(board, side, 4);
             int positionofcheck_0=check_getcheckfeature(board,side,1);
             int positionofcheck_1=check_getcheckfeature(board,side,2);
+            if((positionofcheck_0 == col && positionofcheck_1 == row))
+            {
+                return true;
+            }
             if (type == 0)
             {
-                if(positionofcheck_0!=col || positionofcheck_1 != row)
+               // if(positionofcheck_0!=col || positionofcheck_1 != row)
                 {
                     return false;
                 }
             }
-            else if (type == 1)
+            if (type == 1)
             {
                 int kingposition_0 = check_getcheckfeature(board, side, 5);
                 int kingposition_1 = check_getcheckfeature(board, side, 6);
