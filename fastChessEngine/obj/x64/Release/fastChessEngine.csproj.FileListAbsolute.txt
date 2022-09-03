@@ -1,0 +1,10 @@
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\bin\x64\Release\fastChessEngine.exe.config
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\bin\x64\Release\fastChessEngine.exe
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\bin\x64\Release\fastChessEngine.pdb
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.Properties.Resources.resources
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.csproj.GenerateResource.cache
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.csproj.CoreCompileInputs.cache
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.exe
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.pdb
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.Form1.resources
+C:\Users\medo1\source\repos\fastChessEngine\fastChessEngine\obj\x64\Release\fastChessEngine.csproj.AssemblyReference.cache
