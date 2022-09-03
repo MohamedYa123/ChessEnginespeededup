@@ -805,7 +805,8 @@ namespace fastChessEngine
                 {
                     int part = square_getpart(board, x-1, y);
                     bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
-                    if (ocupiedblack)
+                    bool nopiece = square_getsquare_feature(board, ax, ay,4) ==-1;
+                    if (ocupiedblack && nopiece)
                     {
                         int pp = square_litefeature_extractor(part, 4);
                         bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
@@ -827,7 +828,8 @@ namespace fastChessEngine
                 ay = y - 1;
                 int part = square_getpart(board, x + 1, y);
                 bool ocupiedwhite = square_litefeature_extractor(part, 2) == 1;
-                if(ocupiedwhite){
+                bool nopiece = square_getsquare_feature(board, ax, ay, 4) == -1;
+                if (ocupiedwhite && nopiece){
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
                     bool longmovefirst = piece_getpiece_feature(board, pp, 6) == 1;
@@ -856,7 +858,8 @@ namespace fastChessEngine
                 ay = y + 1;
                 int part = square_getpart(board, x + 1, y);
                 bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
-                if (ocupiedblack)
+                bool nopiece = square_getsquare_feature(board, ax, ay, 4) == -1;
+                if (ocupiedblack && nopiece)
                 {
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
@@ -877,7 +880,8 @@ namespace fastChessEngine
                 ay = y - 1;
                 int part = square_getpart(board, x - 1, y);
                 bool ocupiedwhite = square_litefeature_extractor(part, 2) == 1;
-                if (ocupiedwhite)
+                bool nopiece = square_getsquare_feature(board, ax, ay, 4) == -1;
+                if (ocupiedwhite&& nopiece)
                 {
                     int pp = square_litefeature_extractor(part, 4);
                     bool pawntype = piece_getpiece_feature(board, pp, 0) == 0;
