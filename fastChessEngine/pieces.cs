@@ -538,7 +538,7 @@ namespace fastChessEngine
             var collow = piece_colcheck(board, side, x, y); // !colcheck();
             var diaglow_R = piece_diagonalcheckright(board, side, x, y);// !diagonal_right_check();
             var diaglow_L = piece_diagonalcheckleft(board, side, x, y);// !diagonal_left_check();
-            bool allow = collow && diaglow_L && diaglow_R;
+            bool allow = diaglow_R && rawalow && collow;
             int aa = 1;
             int bb = 1;
             //
@@ -1249,9 +1249,9 @@ namespace fastChessEngine
             }
             int kingcol = check_getcheckfeature(board, side, 5);
             side = 1 - side;
-            if (row < 7 && kingcol < col && row<7)
+            if ( kingcol < col && col<7)
             {
-                var part = square_getpart(board, col, row + 1);
+                var part = square_getpart(board, col+1, row );
                 var rowleft = square_litefeature_extractor(part, 6 + side * 2)==1;
                 var piece = square_litefeature_extractor(part, 4);
                 if (piece != -1)
@@ -1269,7 +1269,7 @@ namespace fastChessEngine
                 }
                 if (rowleft)
                 {
-                    for (int i = col, i2 = row-1; i2 > kingrow; i2--)
+                    for (int i = col-1, i2 = row; i > kingcol; i--)
                     {
                         if (square_getsquare_feature(board, i, i2, 4) != -1)
                         {
@@ -1279,9 +1279,9 @@ namespace fastChessEngine
                     return false;
                 }
             }
-            else if (row >0 && kingcol > col && row>0)
+            else if ( kingcol > col && col>0)
             {
-                var part = square_getpart(board, col, row - 1);
+                var part = square_getpart(board, col-1, row );
                 var rowright = square_litefeature_extractor(part, 5 + side * 2) == 1;
                 var piece = square_litefeature_extractor(part, 4);
                 if (piece != -1)
@@ -1299,7 +1299,7 @@ namespace fastChessEngine
                 }
                 if (rowright)
                 {
-                    for (int i = col, i2 = row+1; i2 < kingrow; i2++)
+                    for (int i = col+1, i2 = row; i < kingcol; i++)
                     {
                         if (square_getsquare_feature(board, i, i2, 4) != -1)
                         {
@@ -1320,10 +1320,10 @@ namespace fastChessEngine
             }
             int kingrow = check_getcheckfeature(board, side, 6);
             side = 1 - side;
-            if (col < 7 && kingrow < row && col<7)
+            if ( kingrow < row && row<7)
             {
              //   var coldown = square_getsquare_feature(board, col+1, row, 10 + side * 2)==1;
-                var part = square_getpart(board, col + 1, row);
+                var part = square_getpart(board, col , row+1);
                 var coldown = square_litefeature_extractor(part, 10 + side * 2) == 1;
                 var piece = square_litefeature_extractor(part, 4);
                 
@@ -1342,7 +1342,7 @@ namespace fastChessEngine
                 }
                 if (coldown)
                 {
-                    for (int i = col-1, i2 = row; i > kingcol; i--)
+                    for (int i = col, i2 = row-1; i2 > kingrow; i2--)
                     {
                         if (square_getsquare_feature(board, i, i2, 4) != -1)
                         {
@@ -1352,9 +1352,9 @@ namespace fastChessEngine
                     return false;
                 }
             }
-            else if (col >0 && kingrow > row && col>0)
+            else if (  kingrow > row && row>0)
             {
-                var part = square_getpart(board, col - 1, row);
+                var part = square_getpart(board, col, row-1);
                 var colup = square_litefeature_extractor(part, 9 + side * 2) == 1;
                 var piece = square_litefeature_extractor(part, 4);
                 
@@ -1373,7 +1373,7 @@ namespace fastChessEngine
                 }
                 if (colup)
                 {
-                    for (int i = col+1, i2 = row; i < kingcol; i++)
+                    for (int i = col, i2 = row + 1; i2 < kingrow; i2++)
                     {
                         if (square_getsquare_feature(board, i, i2, 4) != -1)
                         {

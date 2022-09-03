@@ -132,7 +132,7 @@ namespace fastChessEngine
             {
                 return;
             }
-            if (pawn && (side == 0 && y1 == 7) || (side == 1 && y1 == 0))
+            if (pawn && ((side == 0 && y1 == 7) || (side == 1 && y1 == 0)))
             {
                 for(int i = 4; i >0; i--)
                 {
