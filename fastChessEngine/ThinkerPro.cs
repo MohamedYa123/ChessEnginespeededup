@@ -62,7 +62,7 @@ namespace fastChessEngine
                 int br = movesindices[t];
                 if (depth == depthM)
                 { sequencemoves.Clear(); }
-                
+                //h
                 int newboard = freeboard.Pop();
                 board_copyboard(board, newboard);
                 move_aplymove(newboard, br,board);
