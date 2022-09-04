@@ -81,6 +81,7 @@
     <Compile Include="squares.cs" />
     <Compile Include="pieces.cs" />
     <Compile Include="ThinkerPro.cs" />
+    <Compile Include="zoobristhasher.cs" />
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>

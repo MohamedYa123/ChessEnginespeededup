@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace fastChessEngine
@@ -107,15 +108,27 @@ namespace fastChessEngine
                 }
             }
         }
+        int alldone = 0;
+        void increaselock()
+        {
+            Interlocked.Increment(ref alldone);
+        }
         public void board_resetallsquares(int board)
         {
+            alldone = 0;
             for(int i = 0; i < 8; i++)
             {
                 for(int i2 = 0; i2 < 8; i2++)
                 {
-                    square_reset_square(board, i, i2);
+                     square_reset_square(board, i, i2);
+                   // Task ts = new Task(() => square_reset_square(board, i, i2));
+                  //  ts.Start();
                 }
             }
+            //while (alldone < 64)
+            //{
+
+            //}
         }
 
         /* slightly faster code

@@ -20,7 +20,7 @@ namespace fastChessEngine
             pieces = new int[totalnumberassign* piecesperboard * totalPiecesFeatures];
             //type,col,row,exists,side,nevermoved,longmovefirst
         }
-        public double piece_getvalue(int board,int piece)
+        public int piece_getvalue(int board,int piece)
         {
             switch (piece_getpiece_feature(board, piece, 0))
             {
@@ -31,7 +31,7 @@ namespace fastChessEngine
                 case 2:
                     return 30;
                 case 3:
-                    return 32.5;
+                    return 32;
                 case 4:
                     return 90;
                 case 5:
@@ -68,7 +68,7 @@ namespace fastChessEngine
                 pieces[a2 + 3] = pieces[a + 3];
                 pieces[a2 + 4] = pieces[a + 4];
                 pieces[a2 + 5] = pieces[a + 5];
-                pieces[a2 + 6] = pieces[a + 6];
+                pieces[a2 + 6] = 0;
                 piece_putpieceinsquare(newboard, piece);
             }
         }
@@ -261,7 +261,7 @@ namespace fastChessEngine
                         bool checkedblack = square_litefeature_extractor(part, 1) == 1;
                         bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
                         bool checkedwhite = square_litefeature_extractor(part, 0) == 1;
-                        if (tx < 2 || (side==0&& checkedblack)||(side==1 &&checkedwhite) || ocupiedblack||ocupiedwhite )
+                        if (tx >6 || (side==0&& checkedblack)||(side==1 &&checkedwhite) || ocupiedblack||ocupiedwhite )
                         {
                             cs = false;
                             break;
@@ -290,7 +290,7 @@ namespace fastChessEngine
                         bool checkedblack = square_litefeature_extractor(part, 1) == 1;
                         bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
                         bool checkedwhite = square_litefeature_extractor(part, 0) == 1;
-                        if (tx > 7 || (side == 0 && checkedblack) || (side == 1 && checkedwhite) || ocupiedblack || ocupiedwhite)
+                        if (tx <1 || (side == 0 && checkedblack) || (side == 1 && checkedwhite) || ocupiedblack || ocupiedwhite)
                         {
                             cs = false;
                             break;

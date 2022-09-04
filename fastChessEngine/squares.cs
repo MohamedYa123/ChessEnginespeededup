@@ -161,7 +161,7 @@ namespace fastChessEngine
                 squares[l + 20] = 0;
                 squares[l + 21] = 0;
                 squares[l + 22] = 0;
-             
+            //increaselock();
           //  }
           //  squares[l + 4] = -1;
         }

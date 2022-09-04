@@ -51,7 +51,7 @@ namespace fastChessEngine
                  th.board_getallchecks(0, 1);
                  th.board_getallmoves(0,0);
                 // th.move_aplymove(0, 0);
-                th.board_copyboard(0, 1);
+              //  th.board_copyboard(0, 1);
               //  th.Board_init_board(1);
                 //  th.board_getallchecks(1, 1);
                 //th.board_getallmoves(1, 0);
@@ -111,13 +111,13 @@ namespace fastChessEngine
         private void button5_Click(object sender, EventArgs e)
         {
             Stopwatch sp = new Stopwatch();
-            th.depthM =6;
+            th.depthM =(int)(numericUpDown2.Value)+1;
             th.board_setboardfeature(0, 5, 0);
             sp.Start();
-            th.search(0, 0, th.depthM, 0);
+            var eval= th.search(0, 0, th.depthM, 0,checkBox1.Checked);
             sp.Stop();
             th.board_setboardfeature(0, 5, 0);
-            MessageBox.Show(th.branchesfound + " time : "+sp.ElapsedMilliseconds+" ms \n averagspeed : "+ th.branchesfound / sp.ElapsedMilliseconds + " knode/sec");
+            MessageBox.Show(th.branchesfound + " time : "+sp.ElapsedMilliseconds+" ms \n averagspeed : "+ th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\neval : "+eval+" Bestmove : "+th.bestmove);
         }
     }
 

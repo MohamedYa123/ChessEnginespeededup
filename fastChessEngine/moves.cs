@@ -146,6 +146,11 @@ namespace fastChessEngine
                     moves[pointer11 + 7] = y2;
                     moves[pointer11 + 8] = piece;
                     moves[pointer11 + 9] = part2;
+                    moves[pointer11 + 3] = getvalue(i);
+                    if (part2 != -1)
+                    {
+                        moves[pointer11 + 3] += piece_getvalue(board, part2);
+                    }
                     board_increasepointer(board);
                     pointer++;
                     move++;
@@ -163,9 +168,34 @@ namespace fastChessEngine
                 moves[pointer11 + 7] = y2;
                 moves[pointer11 + 8] = piece;
                 moves[pointer11 + 9] = part2;
+                moves[pointer11 + 3] = piece_getvalue(board, piece);
+                if (part2 != -1)
+                {
+                    moves[pointer11 + 3] += piece_getvalue(board, part2);
+                }
                 board_increasepointer(board);
                 pointer++;
             }
+        }
+        int getvalue(int type)
+        {
+
+            switch (type)
+            {
+                case 0:
+                    return 10;
+                case 1:
+                    return 50;
+                case 2:
+                    return 30;
+                case 3:
+                    return 32;
+                case 4:
+                    return 90;
+                case 5:
+                    return 40;
+            }
+            return 0;
         }
         public void move_aplymove(int board,int move,int boardfrom=-1)
         {
@@ -203,7 +233,7 @@ namespace fastChessEngine
                 piece_setpiece_feature(board, piece, 0, promotion);
             }
             pieceChangePosition(board, piece, col, row);
-            board_resetlongmovefirstpieces(board);//around 5% slower
+        //    board_resetlongmovefirstpieces(board);//around 5% slower
             piece_setpiece_feature(board, piece, 6, longmove);
         }
         /// <summary>
