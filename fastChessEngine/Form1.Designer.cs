@@ -29,30 +29,44 @@ namespace fastChessEngine
         /// </summary>
         private void InitializeComponent()
         {
-            this.board = new System.Windows.Forms.Panel();
+            this.iboard = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // board
+            // iboard
             // 
-            this.board.Location = new System.Drawing.Point(12, 12);
-            this.board.Name = "board";
-            this.board.Size = new System.Drawing.Size(739, 631);
-            this.board.TabIndex = 0;
+            this.iboard.Location = new System.Drawing.Point(12, 12);
+            this.iboard.Name = "iboard";
+            this.iboard.Size = new System.Drawing.Size(648, 608);
+            this.iboard.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(874, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(253, 59);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "new game";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1048, 655);
-            this.Controls.Add(this.board);
+            this.ClientSize = new System.Drawing.Size(1173, 724);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.iboard);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel board;
+        private System.Windows.Forms.Panel iboard;
+        public System.Windows.Forms.Button button1;
     }
 }

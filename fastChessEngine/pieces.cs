@@ -92,7 +92,25 @@ namespace fastChessEngine
             var row = pieces[part + 2];
             square_freesquare(board, col, row);
         }
-        string piece_to_string(int board,int piece)
+        public string piece_todraw(int board, int piece)
+        {
+            switch (piece_getpiece_feature(board, piece, 0))
+            {
+                case 0:
+                    return "♙";
+                case 1:
+                    return "♖";
+                case 2:
+                    return "♘";
+                case 3:
+                    return "♗";
+                case 4:
+                    return "♕";
+                case 5:
+                    return "♔"; }
+            return "";
+        }
+        public string piece_to_string(int board,int piece)
         {
             switch (piece_getpiece_feature(board, piece, 0))
             {
@@ -128,7 +146,7 @@ namespace fastChessEngine
         ///features
         ///0=type,1=col,2=row,3=exists,4=side,5=nevermoved,6=longmovefirst
         ///</summary>
-        int piece_getpiece_feature(int board,int piece,int feature)
+        public int piece_getpiece_feature(int board,int piece,int feature)
         {
             return pieces[board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures + feature];
         }

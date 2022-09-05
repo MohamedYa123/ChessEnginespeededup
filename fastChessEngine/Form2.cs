@@ -44,7 +44,7 @@ namespace fastChessEngine
          //   th.board_tostring(0,richTextBox1);
             Stopwatch sp = new Stopwatch();
             sp.Start();
-            for (int i = 0; i < 100000;i++) {
+            for (int i = 0; i < 1;i++) {
                 // th.Board_init_board(0);
                 // th.board_resetallsquares(0);
                 // th.board_putpiecesinsquares(0);
@@ -59,7 +59,7 @@ namespace fastChessEngine
             }
             sp.Stop();
             th.board_tostring(0, richTextBox1);
-            Text = sp.ElapsedMilliseconds + "";
+            //Text = sp.ElapsedMilliseconds + "";
             richTextBox2.Text=(th.board_listallmoves(0));
             //richTextBox2.Text = "";
             //for (int i = 0; i < 8; i++)
@@ -121,6 +121,7 @@ namespace fastChessEngine
         }
         int cc = 0;
         List<int> boards = new List<int>();
+        Form1 f;
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (true)
@@ -143,6 +144,7 @@ namespace fastChessEngine
                 th.board_setboardfeature(0, 5, 0);
                 richTextBox1.Text = "";
                 th.board_tostring(0, richTextBox1);
+                f.button1.PerformClick();
                 try
                 {
                     textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
@@ -223,6 +225,13 @@ namespace fastChessEngine
                 textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
             }
             catch { }
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+             f = new Form1();
+            f.th = th;
+            f.Show();
         }
     }
 
