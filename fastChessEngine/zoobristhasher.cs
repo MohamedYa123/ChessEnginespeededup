@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace fastChessEngine
 {
-    public static class zoobristhasher
+    [Serializable]
+    public  class zoobristhasher
     {
-        public static long[,,] squares_pawn;
-        public static long[,,] squares_Queen;
-        public static long[,,] squares_Rook;
-        public static long[,,] squares_Bishop;
-        public static long[,,] squares_Knight;
-        public static long[,,] squares_king;
+        public  long[,,] squares_pawn;
+        public  long[,,] squares_Queen;
+        public  long[,,] squares_Rook;
+        public  long[,,] squares_Bishop;
+        public  long[,,] squares_Knight;
+        public  long[,,] squares_king;
         static long LongRandom(long min, long max, Random rand)
         {
             long result = rand.Next((Int32)(min >> 32), (Int32)(max >> 32));
@@ -21,7 +22,7 @@ namespace fastChessEngine
             result = result | (long)rand.Next((Int32)min, (Int32)max);
             return result;
         }
-        public static void generate()
+        public  void generate()
         {
             squares_pawn = new long[9, 9, 2];
             squares_Queen = new long[9, 9, 2];

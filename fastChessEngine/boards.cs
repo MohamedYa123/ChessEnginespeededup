@@ -64,8 +64,11 @@ namespace fastChessEngine
             Color c=Color.White;
             for(int i = 7; i >-1; i--)
             {
-                ans += "\n";
-                rtc.SelectedText = Environment.NewLine;
+                if (i != 7)
+                {
+                    ans += "\n";
+                    rtc.SelectedText = Environment.NewLine;
+                }
                 for (int i2 = 0; i2 <8; i2++)
                 {
                     var a= square_to_string(board, i2, i);
@@ -198,7 +201,7 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                 }
             }
         }
-        public double board_eval(int board,int side)
+        public double board_eval(int board,int side,int depth)
         {
             double ans = 0;
             var d = 0;
@@ -232,7 +235,70 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
 
             }
 
-            return ans;
+            return ans/10+ depth/10;
+        }
+        long blackside = -54678908796543;
+        long blackside1 = -488782131846;
+        long whiteside = -2515153462;
+        long whiteside1 = -5684762624;
+        public long board_getkey(int board,int sidetomove,int sideh)
+        {//very slow !! consumed around 30% of the time!!
+            long key = 0;
+          //  for (int i = 0; i < 8; i++)
+            {
+                for (int piece = 0; piece < 32; piece++)
+                {
+                    var exists = piece_getpiece_feature(board,piece,3);
+                    if (piece != -1)
+                    {
+                        long keyy2 = 0;
+                        var side = piece_getpiece_feature(board, piece, 4);
+                        var col = piece_getpiece_feature(board, piece, 1);
+                        var row = piece_getpiece_feature(board, piece, 2);
+                        switch (piece_getpiece_feature(board, piece, 0))
+                        {
+                            case 0:
+                                keyy2=zb.squares_pawn[col, row, side];
+                                break;
+                            case 1:
+                                keyy2 = zb.squares_Rook[col, row, side];
+                                break;
+                            case 2:
+                                keyy2 = zb.squares_Knight[col, row, side];
+                                break;
+                            case 3:
+                                keyy2 = zb.squares_Bishop[col, row, side];
+                                break;
+                            case 4:
+                                keyy2 = zb.squares_Queen[col, row, side];
+                                break;
+                            case 5:
+                                keyy2 = zb.squares_king[col, row, side];
+                                break;
+                        }
+                        key ^= keyy2;
+                    }
+                }
+            }
+            switch (sidetomove)
+            {
+                case 0:
+                    key ^= blackside;
+                    break;
+                case 1:
+                    key ^= whiteside;
+                    break;
+            }
+            switch (sideh)
+            {
+                case 0:
+                    key ^= blackside1;
+                    break;
+                case 1:
+                    key ^= whiteside1;
+                    break;
+            }
+            return key;
         }
         public void Board_init_board(int board)
         {

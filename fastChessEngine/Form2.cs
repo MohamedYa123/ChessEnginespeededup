@@ -117,7 +117,112 @@ namespace fastChessEngine
             var eval= th.search(0, 0, th.depthM, 0,checkBox1.Checked);
             sp.Stop();
             th.board_setboardfeature(0, 5, 0);
-            MessageBox.Show(th.branchesfound + " time : "+sp.ElapsedMilliseconds+" ms \n averagspeed : "+ th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\neval : "+eval+" Bestmove : "+th.bestmove);
+            MessageBox.Show(th.branchesfound + " branches \n time : "+sp.ElapsedMilliseconds+" ms \n average speed : "+ th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\neval : "+eval+" Bestmove : "+(th.bestmove+1));
+        }
+        int cc = 0;
+        List<int> boards = new List<int>();
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (true)
+            {
+                //white
+                Stopwatch sp = new Stopwatch();
+                th.depthM = (int)(numericUpDown2.Value) + 1;
+                th.board_setboardfeature(0, 5, 0);
+                th.board_resetallsquares(0);
+                th.board_putpiecesinsquares(0);
+                th.check_resetme(0);
+                sp.Start();
+                var eval = th.search(cc %2, cc %2, th.depthM, 0, checkBox1.Checked);
+                sp.Stop();
+                th.board_setboardfeature(0, 5, 0);
+                th.move_aplymove(0, th.bestmove);
+                th.board_copyboard(0, boards.Count + 1000);
+                boards.Add(boards.Count + 1000);
+                index = boards.Count+1000;
+                th.board_setboardfeature(0, 5, 0);
+                richTextBox1.Text = "";
+                th.board_tostring(0, richTextBox1);
+                try
+                {
+                    textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
+                }
+                catch { }
+                cc++;
+            }
+            
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            timer1.Enabled = !timer1.Enabled;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Stopwatch sp = new Stopwatch();
+            th.depthM = (int)(numericUpDown2.Value) + 1;
+            th.board_setboardfeature(0, 5, 0);
+            sp.Start();
+            var eval = th.search(1, 1, th.depthM, 0, checkBox1.Checked);
+            sp.Stop();
+            th.board_setboardfeature(0, 5, 0);
+            // th.move_aplymove(0, th.bestmove);
+            // th.board_copyboard(0, boards.Count + 1000);
+            //  boards.Add(boards.Count + 1000);
+            // index = boards.Count + 1000;
+            th.board_setboardfeature(0, 5, 0);
+            richTextBox1.Text = "";
+            th.board_tostring(0, richTextBox1);
+            try
+            {
+                textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
+            }
+            catch { }
+        }
+        int index = 0;
+        private void button9_Click(object sender, EventArgs e)
+        {
+            index--;
+            richTextBox1.Text = "";
+            th.board_tostring(index, richTextBox1);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            index++;
+            richTextBox1.Text = "";
+            th.board_tostring(index, richTextBox1);
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            th.board_copyboard(index, 0);
+            richTextBox1.Text = "";
+            th.board_tostring(index, richTextBox1);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            Stopwatch sp = new Stopwatch();
+            th.depthM = (int)(numericUpDown2.Value) + 1;
+            th.board_setboardfeature(0, 5, 0);
+            sp.Start();
+            var eval = th.search(0, 0, th.depthM, 0, checkBox1.Checked);
+            sp.Stop();
+            th.board_setboardfeature(0, 5, 0);
+           // th.move_aplymove(0, th.bestmove);
+           // th.board_copyboard(0, boards.Count + 1000);
+          //  boards.Add(boards.Count + 1000);
+           // index = boards.Count + 1000;
+            th.board_setboardfeature(0, 5, 0);
+            richTextBox1.Text = "";
+            th.board_tostring(0, richTextBox1);
+            try
+            {
+                textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
+            }
+            catch { }
         }
     }
 

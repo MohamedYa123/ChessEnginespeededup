@@ -8,7 +8,7 @@ namespace fastChessEngine
 {
     public partial class ThinkerPro
     {
-       const int totalnumberassign = 1000;
+       const int totalnumberassign = 10000;
         // int Blocks=70;
         // int blocksize = 10000;
         public int branchesfound = 0;
@@ -18,27 +18,85 @@ namespace fastChessEngine
         int depthhere = 0;
         int boardhere = 0;
         List<string> sequencemoves = new List<string>();
+        zoobristhasher zb = new zoobristhasher();
+        Dictionary<long, double[]> positionslist = new Dictionary<long, double[]>();//after evaluating a position we save it here
         public double search(int side,int sidetomove,int depth,int board, bool withalphabeta, double alpha = -100000000, double beta = 10000000)
         {
-            depthhere = depth;
-            boardhere = board;
-            if (depth == 1)
+            double getevalorpush(double evalfull,long keyfull,int depthfull)
             {
-                freeboard.Push(board);
-                branchesfound++;
-                return board_eval(board, side);
-
+                double[] evalanddepth = { evalfull, depthfull };
+                if (!positionslist.ContainsKey(keyfull))
+                {
+                    positionslist.Add(keyfull, evalanddepth);
+                }
+                else
+                {
+                    if (positionslist[keyfull][1] < depthfull)
+                    {
+                        positionslist[keyfull] = evalanddepth;
+                    }
+                    else
+                    {
+                        return positionslist[keyfull][0];
+                    }
+                }
+                return evalfull;
+            }
+            double getevalorpushlite(int boardfull,int sidefull, long keyfull, int depthfull)
+            {
+                
+                if (!positionslist.ContainsKey(keyfull))
+                {
+                    double[] evalanddepth = { board_eval(boardfull,sidefull,depthfull), depthfull };
+                    positionslist.Add(keyfull, evalanddepth);
+                }
+                else
+                {
+                    if (positionslist[keyfull][1] < depthfull)
+                    {
+                        double[] evalanddepth = { board_eval(boardfull, sidefull,depthfull), depthfull };
+                        positionslist[keyfull] = evalanddepth;
+                    }
+                    else
+                    {
+                        return positionslist[keyfull][0];
+                    }
+                }
+                return board_eval(boardfull, sidefull, depthfull);
             }
             if (depth == depthM)
             {
                 branchesfound = 0;
-                for(int i = 0; i < totalnumberassign-1; i++)
+                zb.generate();
+                positionslist.Clear();
+                for (int i = 0; i < 1000 - 1; i++)
                 {
-                    if (i != board) {
+                    if (i != board)
+                    {
                         freeboard.Push(i);
                     }
                 }
+
             }
+            depthhere = depth;
+            boardhere = board;
+            var key =  board_getkey(board, sidetomove, side);
+            //if(positionslist.ContainsKey(key)&& positionslist[key][1] >= depth)
+            //{
+            //    freeboard.Push(board);
+            //    branchesfound++;
+            //    return positionslist[key][0];
+            //}
+            if (depth == 1)
+            {
+                freeboard.Push(board);
+                branchesfound++;
+                //var eval = board_eval(board, side);
+                
+                return getevalorpushlite(board,side,key,depth);
+
+            }
+            
             board_getallchecks(board, 1 - sidetomove);
             board_getallmoves(board, sidetomove);
             int nummoves = board_getboardfeature(board, 5);
@@ -60,6 +118,7 @@ namespace fastChessEngine
             for (int t = 0; t < nummoves; t++)
             {
                 int br = movesindices[t];
+               // var move = move_to_string(board, br);
                 if (depth == depthM)
                 { sequencemoves.Clear(); }
                 //h
@@ -97,7 +156,8 @@ namespace fastChessEngine
                             //stmain.eval = st.eval;
                             freeboard.Push(board);
                             setbestmove(topmove, depth);
-                            return eval;
+                            branchesfound++;
+                            return  getevalorpush(besteval, key, depth);
                         }
                         else
                         {
@@ -115,7 +175,8 @@ namespace fastChessEngine
                             //stmeval = st.eval;
                             freeboard.Push(board);
                             setbestmove(topmove, depth);
-                            return eval;
+                            branchesfound++;
+                            return getevalorpush(besteval, key,depth);
                         }
                         else
                         {
@@ -131,10 +192,16 @@ namespace fastChessEngine
             if (nummoves == 0)
             {
                 branchesfound++;
+                freeboard.Push(board);
+                return getevalorpushlite(board, side, key, depth); //board_eval(board, side, depth);
             }
             freeboard.Push(board);
             setbestmove(topmove, depth);
-            return besteval;
+            if (depth == depthM)
+            {
+
+            }
+            return getevalorpush(besteval, key, depth); ;
         }
         void setbestmove(int top,int depth)
         {

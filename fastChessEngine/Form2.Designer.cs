@@ -29,6 +29,7 @@ namespace fastChessEngine
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
@@ -44,6 +45,14 @@ namespace fastChessEngine
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button11 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.x)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.y)).BeginInit();
@@ -66,9 +75,11 @@ namespace fastChessEngine
             this.richTextBox1.Font = new System.Drawing.Font("Monospac821 BT", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBox1.Location = new System.Drawing.Point(12, 12);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(479, 342);
+            this.richTextBox1.Size = new System.Drawing.Size(424, 264);
             this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
+            this.richTextBox1.Text = " R  N  B  Q  K  B  N  R \n P  P  P  P  P  P  P  P \n                        \n      " +
+    "                  \n                        \n                        \n P  P  P  P" +
+    "  P  P  P  P \n R  N  B  Q  K  B  N  R ";
             // 
             // richTextBox2
             // 
@@ -158,7 +169,7 @@ namespace fastChessEngine
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(486, 560);
+            this.button5.Location = new System.Drawing.Point(520, 560);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(124, 40);
             this.button5.TabIndex = 14;
@@ -168,7 +179,7 @@ namespace fastChessEngine
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(82, 385);
+            this.numericUpDown2.Location = new System.Drawing.Point(82, 333);
             this.numericUpDown2.Minimum = new decimal(new int[] {
             1,
             0,
@@ -186,7 +197,7 @@ namespace fastChessEngine
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 385);
+            this.label1.Location = new System.Drawing.Point(16, 333);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 17);
             this.label1.TabIndex = 16;
@@ -197,18 +208,97 @@ namespace fastChessEngine
             this.checkBox1.AutoSize = true;
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(19, 430);
+            this.checkBox1.Location = new System.Drawing.Point(19, 361);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(149, 21);
             this.checkBox1.TabIndex = 17;
             this.checkBox1.Text = "alpha beta pruning";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(12, 560);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(124, 40);
+            this.button6.TabIndex = 18;
+            this.button6.Text = "search black";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(170, 560);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(124, 40);
+            this.button7.TabIndex = 19;
+            this.button7.Text = "search white";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(228, 361);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(263, 193);
+            this.textBox1.TabIndex = 20;
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(19, 433);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(124, 40);
+            this.button8.TabIndex = 21;
+            this.button8.Text = "run/stop";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(12, 282);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(124, 40);
+            this.button9.TabIndex = 22;
+            this.button9.Text = "back";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(312, 282);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(124, 40);
+            this.button10.TabIndex = 23;
+            this.button10.Text = "next";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(442, 221);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(104, 30);
+            this.button11.TabIndex = 24;
+            this.button11.Text = "copytocurrent";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1164, 620);
+            this.Controls.Add(this.button11);
+            this.Controls.Add(this.button10);
+            this.Controls.Add(this.button9);
+            this.Controls.Add(this.button8);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numericUpDown2);
@@ -254,6 +344,14 @@ namespace fastChessEngine
         private System.Windows.Forms.NumericUpDown numericUpDown2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button11;
     }
 }
 
