@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -21,6 +22,8 @@ namespace fastChessEngine
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
             button2.PerformClick();
         }
         ThinkerPro th;
@@ -85,6 +88,7 @@ namespace fastChessEngine
 
         private void button3_Click(object sender, EventArgs e)
         {
+            th.board_setboardfeature(0, 5, 0);
             th.board_resetallsquares(0);
             th.check_resetme(0);
             th.board_putpiecesinsquares(0);
@@ -93,7 +97,7 @@ namespace fastChessEngine
             richTextBox2.Text = (th.board_listallmoves(0));
             listBox1.Items.Clear();
             listBox1.Items.AddRange(th.board_listallmoves(0).Split('\n'));
-            th.board_setboardfeature(0, 5, 0);
+            
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -114,6 +118,7 @@ namespace fastChessEngine
             th.depthM =(int)(numericUpDown2.Value)+1;
             th.board_setboardfeature(0, 5, 0);
             sp.Start();
+            pathway pth = new pathway();
             var eval= th.search(0, 0, th.depthM, 0,checkBox1.Checked);
             sp.Stop();
             th.board_setboardfeature(0, 5, 0);
@@ -131,11 +136,15 @@ namespace fastChessEngine
                 th.depthM = (int)(numericUpDown2.Value) + 1;
                 th.board_setboardfeature(0, 5, 0);
                 th.board_resetallsquares(0);
-                th.board_putpiecesinsquares(0);
                 th.check_resetme(0);
+                th.board_putpiecesinsquares(0);
+                
+                pathway pth = new pathway();
                 sp.Start();
                 var eval = th.search(cc %2, cc %2, th.depthM, 0, checkBox1.Checked);
                 sp.Stop();
+                var keyg = th.board_getkey(0, cc % 2, cc % 2);
+                th.putrepeatedposition(keyg);
                 th.board_setboardfeature(0, 5, 0);
                 th.move_aplymove(0, th.bestmove);
                 th.board_copyboard(0, boards.Count + 1000);
@@ -162,25 +171,64 @@ namespace fastChessEngine
 
         private void button6_Click(object sender, EventArgs e)
         {
+            //Thread th = new Thread(() => aplyside(1));
+            //th.Start();
+            aplyside(1);
+            //Task ts = new Task(() => aplyside(1));
+            //ts.Start();
+            //aplyside( 1);
+        }
+        void aplyside(int csc)
+        {
             Stopwatch sp = new Stopwatch();
             th.depthM = (int)(numericUpDown2.Value) + 1;
             th.board_setboardfeature(0, 5, 0);
+            th.board_resetallsquares(0);
+            th.board_putpiecesinsquares(0);
+            th.check_resetme(0);
+            th.board_setboardfeature(0, 5, 0);
+            th.board_resetallsquares(0);
+            th.check_resetme(0);
+            th.board_putpiecesinsquares(0);
             sp.Start();
-            var eval = th.search(1, 1, th.depthM, 0, checkBox1.Checked);
+            pathway pth = new pathway();
+            var eval = th.search(csc % 2, (csc) % 2, th.depthM, 0, checkBox1.Checked);
             sp.Stop();
             th.board_setboardfeature(0, 5, 0);
-            // th.move_aplymove(0, th.bestmove);
-            // th.board_copyboard(0, boards.Count + 1000);
-            //  boards.Add(boards.Count + 1000);
-            // index = boards.Count + 1000;
+            th.move_aplymove(0, th.bestmove);
+            th.board_copyboard(0, boards.Count + 1000);
+            boards.Add(boards.Count + 1000);
+            index = boards.Count + 1000;
             th.board_setboardfeature(0, 5, 0);
             richTextBox1.Text = "";
             th.board_tostring(0, richTextBox1);
             try
             {
-                textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
+                f.button1.PerformClick();
             }
             catch { }
+
+            th.board_setboardfeature(0, 5, 0);
+            th.board_resetallsquares(0);
+            th.check_resetme(0);
+            th.board_putpiecesinsquares(0);
+            th.board_getallchecks(0, 1-csc);
+            th.board_getallmoves(0, 1-csc);
+            richTextBox2.Text = (th.board_listallmoves(0));
+            listBox1.Items.Clear();
+            listBox1.Items.AddRange(th.board_listallmoves(0).Split('\n'));
+            try
+            {
+                textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
+                var c = pth;
+                while (true)
+                {
+                    textBox1.Text += "\r\n" + c.move;
+                    c = c.child;
+                }
+            }
+            catch { }
+            cc++;
         }
         int index = 0;
         private void button9_Click(object sender, EventArgs e)
@@ -206,32 +254,25 @@ namespace fastChessEngine
 
         private void button7_Click(object sender, EventArgs e)
         {
-            Stopwatch sp = new Stopwatch();
-            th.depthM = (int)(numericUpDown2.Value) + 1;
-            th.board_setboardfeature(0, 5, 0);
-            sp.Start();
-            var eval = th.search(0, 0, th.depthM, 0, checkBox1.Checked);
-            sp.Stop();
-            th.board_setboardfeature(0, 5, 0);
-           // th.move_aplymove(0, th.bestmove);
-           // th.board_copyboard(0, boards.Count + 1000);
-          //  boards.Add(boards.Count + 1000);
-           // index = boards.Count + 1000;
-            th.board_setboardfeature(0, 5, 0);
-            richTextBox1.Text = "";
-            th.board_tostring(0, richTextBox1);
-            try
-            {
-                textBox1.Text = (th.branchesfound + " branches \r\n time : " + sp.ElapsedMilliseconds + " ms \r\n average speed : " + th.branchesfound / sp.ElapsedMilliseconds + " knode/sec\r\neval : " + eval + "\r\nBestmove : " + th.bestmove);
-            }
-            catch { }
+            //Thread th = new Thread(() => aplyside(0));
+            //th.Start();
+            aplyside(0);
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
              f = new Form1();
             f.th = th;
+            f.f2 = this;
+            f.blackside = comboBox2.SelectedIndex;
+            f.whiteside = comboBox1.SelectedIndex;
+            button3.PerformClick();
             f.Show();
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(th.board_eval(0, 0, 1, true, 1) + " "+th.positionslist[th.board_getkey(0,1,0)][0]);
         }
     }
 

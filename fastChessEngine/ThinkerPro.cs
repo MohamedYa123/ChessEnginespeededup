@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace fastChessEngine
 {
+    public class pathway {
+        public int move;
+        public pathway child;
+    }
     public partial class ThinkerPro
     {
        const int totalnumberassign = 10000;
@@ -19,21 +23,34 @@ namespace fastChessEngine
         int boardhere = 0;
         List<string> sequencemoves = new List<string>();
         zoobristhasher zb = new zoobristhasher();
-        Dictionary<long, double[]> positionslist = new Dictionary<long, double[]>();//after evaluating a position we save it here
+        Dictionary<long, int> repeatedpositions = new Dictionary<long, int>();
+        Dictionary<long, int> prevpathway = new Dictionary<long, int>();
+        List<string> listpath = new List<string>();
+        public void putrepeatedposition(long keyg)
+        {
+            repeatedpositions.Add(keyg, 0);
+        }
+        public  Dictionary<long, double[]> positionslist = new Dictionary<long, double[]>();//after evaluating a position we save it here
+        Dictionary<long, pathway> positionspaths = new Dictionary<long, pathway>();//after evaluating a position we save it here
+    //    string lastmove = "";
         public double search(int side,int sidetomove,int depth,int board, bool withalphabeta, double alpha = -100000000, double beta = 10000000)
         {
+            
             double getevalorpush(double evalfull,long keyfull,int depthfull)
             {
+                //return evalfull;
                 double[] evalanddepth = { evalfull, depthfull };
                 if (!positionslist.ContainsKey(keyfull))
                 {
                     positionslist.Add(keyfull, evalanddepth);
+                  //  positionspaths.Add(keyfull, pth);
                 }
-                else
+                else 
                 {
                     if (positionslist[keyfull][1] < depthfull)
                     {
                         positionslist[keyfull] = evalanddepth;
+                     //   positionspaths[keyfull] = pthc;
                     }
                     else
                     {
@@ -42,19 +59,24 @@ namespace fastChessEngine
                 }
                 return evalfull;
             }
-            double getevalorpushlite(int boardfull,int sidefull, long keyfull, int depthfull)
+            double getevalorpushlite(int boardfull,int sidefull, long keyfull, int depthfull,bool aretheremoves)
             {
-                
+                //return board_eval(boardfull, sidefull, depthfull, aretheremoves, sidetomove);
+                if (!aretheremoves)
+                {
+                    return board_eval(boardfull, sidefull, depthfull, aretheremoves, sidetomove);
+                }
                 if (!positionslist.ContainsKey(keyfull))
                 {
-                    double[] evalanddepth = { board_eval(boardfull,sidefull,depthfull), depthfull };
+                    double[] evalanddepth = { board_eval(boardfull,sidefull,depthfull, aretheremoves, sidetomove), depthfull };
                     positionslist.Add(keyfull, evalanddepth);
+                 //   positionspaths.Add(keyfull, pthc);
                 }
                 else
                 {
                     if (positionslist[keyfull][1] < depthfull)
                     {
-                        double[] evalanddepth = { board_eval(boardfull, sidefull,depthfull), depthfull };
+                        double[] evalanddepth = { board_eval(boardfull, sidefull,depthfull, aretheremoves, sidetomove), depthfull };
                         positionslist[keyfull] = evalanddepth;
                     }
                     else
@@ -62,13 +84,15 @@ namespace fastChessEngine
                         return positionslist[keyfull][0];
                     }
                 }
-                return board_eval(boardfull, sidefull, depthfull);
+                return board_eval(boardfull, sidefull, depthfull, aretheremoves, sidetomove);
             }
             if (depth == depthM)
             {
                 branchesfound = 0;
                 zb.generate();
                 positionslist.Clear();
+                prevpathway.Clear();
+                positionspaths.Clear();
                 for (int i = 0; i < 1000 - 1; i++)
                 {
                     if (i != board)
@@ -76,28 +100,44 @@ namespace fastChessEngine
                         freeboard.Push(i);
                     }
                 }
-
             }
             depthhere = depth;
             boardhere = board;
-            var key =  board_getkey(board, sidetomove, side);
-            //if(positionslist.ContainsKey(key)&& positionslist[key][1] >= depth)
-            //{
-            //    freeboard.Push(board);
-            //    branchesfound++;
-            //    return positionslist[key][0];
-            //}
+            var key = board_getkey(board, sidetomove, side);
+           
+            if (repeatedpositions.ContainsKey(key) || prevpathway.ContainsKey(key))
+            {
+                freeboard.Push(board);
+                return 0;
+            }
+            prevpathway.Add(key, 0);
+            if (positionslist.ContainsKey(key) && positionslist[key][1] >= depth)
+            {
+              //  var cdepth = positionslist[key][1];
+                //if (depth > 3)
+                //{
+                //    var fh = positionslist[key][1];
+                //}
+
+                freeboard.Push(board);
+                branchesfound++;
+                prevpathway.Remove(key);
+              //  pth.child = positionspaths[key];
+                return positionslist[key][0];
+            }
             if (depth == 1)
             {
                 freeboard.Push(board);
                 branchesfound++;
+                //board_getallmoves(board, sidetomove);
                 //var eval = board_eval(board, side);
-                
-                return getevalorpushlite(board,side,key,depth);
+                board_getallchecks(board, 1 - sidetomove);
+                prevpathway.Remove(key);
+                return getevalorpushlite(board,side,key,depth, board_arethermoves(board,sidetomove));
 
             }
             
-            board_getallchecks(board, 1 - sidetomove);
+            board_getallchecks(board,1-sidetomove);
             board_getallmoves(board, sidetomove);
             int nummoves = board_getboardfeature(board, 5);
             int[] movesindices = new int[nummoves];
@@ -115,24 +155,85 @@ namespace fastChessEngine
                 besteval = 1000000000;
             }
             int topmove = 0;
+            //pathway bestpth = null;
+            double alpha2 = alpha;
+            double beta2 = beta;
+            if (sidetomove != side)
+            {
+                alpha2 = alpha;
+                beta2 = 10000000;
+            }
+            else
+            {
+                alpha2 = -10000000;
+                beta2 = beta;
+            }
             for (int t = 0; t < nummoves; t++)
             {
                 int br = movesindices[t];
                // var move = move_to_string(board, br);
-                if (depth == depthM)
-                { sequencemoves.Clear(); }
+               // bool yes = false;
+              //  var ls = lastmove;
+              //  //var ev = 0.0;
+                //if (move == "Kb7" && lastmove== "Kd3")
+                //{
+                //    ev = board_eval(board, side, depth, true, sidetomove);
+                //    yes = true;
+                //}
+                //if (depth == depthM)
+                //{ sequencemoves.Clear(); }
                 //h
                 int newboard = freeboard.Pop();
                 board_copyboard(board, newboard);
                 move_aplymove(newboard, br,board);
-                var eval= search(side, 1 - sidetomove, depth - 1, newboard, withalphabeta, alpha,beta);
-                if (sidetomove == side)
+                //pathway pth3 = new pathway();
+                //pth3.move = br;
+                //pth.child = pth3;
+               // lastmove = br;
+                var eval= search(side, 1 - sidetomove, depth - 1, newboard, withalphabeta, alpha2,beta2);
+                //if (move.Contains("x") )
+                //{
+
+                //}
+                switch (depth)
+                {
+                    case 28:
+                        break;
+                    case 27:
+                        break;
+                    case 26:
+                        break;
+                    case 25:
+                        break;
+                    case 24:
+                        break;
+                    case 23:
+                        break;
+                    case 22:
+                        break;
+                    case 21:
+                        break;
+                    case 12:
+                        break;
+                    case 11:
+                        break;
+                    case 10:
+                        break;
+                }
+                //if ( yes && sidetomove==1&&ev<2)
+                //{
+                    
+                    
+                //}
+                
+                    if (sidetomove == side)
                 {
                     if (eval > besteval)
                     {
                         besteval = eval;
                         // stmain.bestmove = fmove;
                         // bestmove = br;
+                        //bestpth = pth3;
                         topmove = br;
                     }
                 }
@@ -142,6 +243,7 @@ namespace fastChessEngine
                     {
                         besteval = eval;
                         //bestmove = br;
+                        //bestpth = pth3;
                         topmove = br;
                     }
                 }
@@ -151,49 +253,67 @@ namespace fastChessEngine
                     if (sidetomove == side)
                     {
                         //it means white to move
-                        if (beta <= eval)
+                        if (beta2 <= eval)
                         {
                             //stmain.eval = st.eval;
                             freeboard.Push(board);
                             setbestmove(topmove, depth);
                             branchesfound++;
+                            // pathway pth2 = new pathway();
+                            // pth2.move = move;
+                            //  pth.child = bestpth;
+                            prevpathway.Remove(key);
+                            //if (beta == eval)
+                            //{
+                            //    return besteval;
+                            //}
                             return  getevalorpush(besteval, key, depth);
                         }
                         else
                         {
                             // beta2 = st.eval;
                         }
-                        if (eval >= alpha)
+                        if (eval > alpha2)
                         {
-                            alpha = eval;
+                            alpha2 = eval;
                         }
                     }
                     else
                     {
-                        if (alpha >= eval)
+                        if (alpha2 >= eval)
                         {
                             //stmeval = st.eval;
                             freeboard.Push(board);
                             setbestmove(topmove, depth);
                             branchesfound++;
+                            // pathway pth2 = new pathway();
+                            // pth2.move = move;
+                            //     pth.child = bestpth;
+                            prevpathway.Remove(key);
+                            //if (alpha == eval)
+                            //{
+                            //    return besteval;
+                            //}
                             return getevalorpush(besteval, key,depth);
                         }
                         else
                         {
                             //   alpha2 = st.eval;
                         }
-                        if (eval <= beta)
+                        if (eval < beta2)
                         {
-                            beta = eval;
+                            beta2 = eval;
                         }
                     }
                 }
             }
+            
             if (nummoves == 0)
             {
                 branchesfound++;
                 freeboard.Push(board);
-                return getevalorpushlite(board, side, key, depth); //board_eval(board, side, depth);
+                prevpathway.Remove(key);
+                return getevalorpushlite(board, side, key, depth,false); //board_eval(board, side, depth);
             }
             freeboard.Push(board);
             setbestmove(topmove, depth);
@@ -201,7 +321,11 @@ namespace fastChessEngine
             {
 
             }
-            return getevalorpush(besteval, key, depth); ;
+            prevpathway.Remove(key);
+            //pathway pth22 = new pathway();
+            //pth22.move = move_to_string(board,bestmove);
+           // pth.child = bestpth;
+            return getevalorpush(besteval, key, depth);
         }
         void setbestmove(int top,int depth)
         {

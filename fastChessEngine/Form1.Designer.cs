@@ -54,7 +54,7 @@ namespace fastChessEngine
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1173, 724);
+            this.ClientSize = new System.Drawing.Size(692, 636);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.iboard);
             this.Name = "Form1";

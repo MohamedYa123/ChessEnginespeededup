@@ -25,7 +25,7 @@ namespace fastChessEngine
             switch (piece_getpiece_feature(board, piece, 0))
             {
                 case 0:
-                    return 10;
+                    return 10;// +piece_getpiece_feature(board,piece,1);
                 case 1:
                     return 50;
                 case 2:
@@ -168,6 +168,7 @@ namespace fastChessEngine
                     break;
                 case 1:
                     piece_getrookchecks(board, piece);
+                    
                     break;
                 case 2:
                     piece_getknightchecks(board, piece);
@@ -205,6 +206,8 @@ namespace fastChessEngine
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
+            kingcol = x;
+            kingrow = y;
             int side = pieces[pointerP + 4];
             bool nevermoved = pieces[pointerP + 5]==1;
             //get check
@@ -253,7 +256,7 @@ namespace fastChessEngine
                       //  if (ocupiedblack||ocupiedwhite)
                         {
                             //mv.part2 = occupyingpiece;
-                            move_createmove(board, pointer, -1, -1, -1, xv, yv, -1, -1,piece,-1, true,false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, xv, yv, -1, -1,piece,-1, true,false, ref pointer,side,5);
 
                         }
                        // pushAndCalcForking(moves, mv);
@@ -293,7 +296,7 @@ namespace fastChessEngine
                         bool nevermovedrook = piece_getpiece_feature(board, exists, 5) == 1;
                         if (cs && rooktype && nevermovedrook && sameside)
                         {
-                            move_createmove(board, pointer, 0+side*2, -1, -1, x + 2, y, tx2 - 2, y,piece, exists, true, false, ref pointer,side);
+                            move_createmove(board, pointer, 0+side*2, -1, -1, x + 2, y, tx2 - 2, y,piece, exists, true, false, ref pointer,side,5);
                             // pushAndCalcForking(moves, m);
                         } }
                 }
@@ -324,7 +327,7 @@ namespace fastChessEngine
                         if (cs && rooktype && nevermovedrook && sameside)
                         {
                             
-                            move_createmove(board, pointer, 1 + side * 2, -1, -1, x - 2, y, tx2+3, y,piece, exists, true, false, ref pointer,side);
+                            move_createmove(board, pointer, 1 + side * 2, -1, -1, x - 2, y, tx2+3, y,piece, exists, true, false, ref pointer,side,5);
                             //  pushAndCalcForking(moves, m);
                         }
                     }
@@ -417,7 +420,7 @@ namespace fastChessEngine
                         if (!ocupiedwhite && rawalow && collow && diaglow_L && diaglow_R)
                         {
                           
-                            move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, false, ref pointer,side,2);
                             //  moves.Push(mv);
                             //pushifAccept(moves, mv);
                         }
@@ -425,7 +428,7 @@ namespace fastChessEngine
                     case 1:
                         if (!ocupiedblack && rawalow && collow && diaglow_L && diaglow_R)
                         {
-                            move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, false, ref pointer,side,2);
                             // pushifAccept(moves, mv);
                         }
                         break;
@@ -433,7 +436,7 @@ namespace fastChessEngine
 
             }
         }
-        void piece_getmove_rook(int board, int piece)
+        void piece_getmove_rook(int board, int piece,int queentypeorrook)
         {
             //first extractfeatures board and piece
             //piece features
@@ -522,21 +525,21 @@ namespace fastChessEngine
                         if (side == 0 && ocupiedblack)
                         {
 
-                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                         }
                         else if (side == 1 && ocupiedwhite)
                         {
                             //nb.squares[i, i2].activatecheck(this);
-                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                         }
                         break;
                     }
-                    move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                    move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                     // pushIfacceptdv(mv);
                 }
             }
         }
-        void piece_getmove_bishop(int board,int piece)
+        void piece_getmove_bishop(int board,int piece,int queentypeorrook)
         {
             //first extractfeatures board and piece
             //piece features
@@ -554,9 +557,17 @@ namespace fastChessEngine
 
             var rawalow = piece_rowcheck(board, side, x, y);
             var collow = piece_colcheck(board, side, x, y); // !colcheck();
-            var diaglow_R = piece_diagonalcheckright(board, side, x, y);// !diagonal_right_check();
-            var diaglow_L = piece_diagonalcheckleft(board, side, x, y);// !diagonal_left_check();
-            bool allow = diaglow_R && rawalow && collow;
+            var diaglow_L = piece_diagonalcheckright(board, side, x, y);// !diagonal_right_check();
+            var diaglow_R = piece_diagonalcheckleft(board, side, x, y);// !diagonal_left_check();
+            int kingrow = check_getcheckfeature(board, side, 6);
+            int kingcol = check_getcheckfeature(board, side, 5);
+            if (kingrow - y > 0)
+            {
+                var r = diaglow_R;
+                diaglow_R = diaglow_L;
+                diaglow_L = r;
+            }
+            bool allow = diaglow_L && rawalow && collow;
             int aa = 1;
             int bb = 1;
             //
@@ -581,7 +592,7 @@ namespace fastChessEngine
                         a2 = 8;
                         b1 = -1;
                         b2 = 8;
-
+                        allow = diaglow_L && rawalow && collow;
                         break;
                     case 2:
                         aa = -1;
@@ -594,7 +605,7 @@ namespace fastChessEngine
                         a2 = 8;
                         b1 = -1;
                         b2 = 8;
-                        allow = diaglow_L && rawalow && collow;
+                        allow = diaglow_R && rawalow && collow;
                         break;
                     case 3:
                         aa = 1;
@@ -607,6 +618,7 @@ namespace fastChessEngine
                         a2 = 8;
                         b1 = -1;
                         b2 = 8;
+                        allow = diaglow_R && rawalow && collow;
                         break;
                 }
                 for (int i = ttx, i2 = tty; i > a1 && i < a2 && i2 < b2 && i2 > b1; i += aa, i2 += bb)
@@ -628,16 +640,16 @@ namespace fastChessEngine
                         if (side == 0 && ocupiedblack)
                         {
 
-                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                         }
                         else if (side == 1 && ocupiedwhite)
                         {
                             //nb.squares[i, i2].activatecheck(this);
-                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                            move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                         }
                         break;
                     }
-                    move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side);
+                    move_createmove(board, pointer, -1, -1, -1, i, i2, -1, -1, piece,-1, false, false, ref pointer,side, queentypeorrook);
                     // pushIfacceptdv(mv);
                 }
             }
@@ -705,7 +717,7 @@ namespace fastChessEngine
                 {
                     // m.longmove = true;
                     // moves.Push(m);
-                    move_createmove(board, pointer, -1, 1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer,side);
+                    move_createmove(board, pointer, -1, 1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer,side,0);
                 }
             }
            // move mm = new move();
@@ -725,7 +737,7 @@ namespace fastChessEngine
                 //I need to check if it's safe // change in row number requires rowcheck ##
                 if (rawalow && diaglow_L && diaglow_R && !(ocupiedwhite||ocupiedblack))
                 {
-                    move_createmove(board, pointer, -1, -1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer, side);
+                    move_createmove(board, pointer, -1, -1, -1, x, ay, -1, -1, piece,-1, false, true, ref pointer, side,0);
                 }
             }
            // takes
@@ -769,7 +781,7 @@ namespace fastChessEngine
             //I need to check if it's safe // change in row number requires rowcheck ##
             if (rawalow && diaglow_R && collow && addme)
             {
-                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, true, ref pointer, side);
+                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, true, ref pointer, side,0);
             }
             addme = false;
             if (side == 0&& x > 0 && y < 7)
@@ -805,7 +817,7 @@ namespace fastChessEngine
             //I need to check if it's safe // change in row number requires rowcheck ##
             if (rawalow && diaglow_L && collow && addme)
             {
-                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, true, ref pointer, side);
+                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece,-1, false, true, ref pointer, side,0);
             }
             //on pasent
            // move mffk = new move();
@@ -862,7 +874,7 @@ namespace fastChessEngine
             //I need to check if it's safe // change in row number requires rowcheck ##
             if (rawalow && diaglow_L && collow && addme)
             {
-                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece, part_2, false, true, ref pointer, side);
+                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece, part_2, false, true, ref pointer, side,0);
             }
             //on pasent
            // move mffl = new move();
@@ -915,7 +927,7 @@ namespace fastChessEngine
             //I need to check if it's safe // change in row number requires rowcheck ##
             if (rawalow && diaglow_L && collow && addme)
             {
-                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece, part_2, false, true, ref pointer, side);
+                move_createmove(board, pointer, -1, -1, -1, ax, ay, -1, -1, piece, part_2, false, true, ref pointer, side,0);
             }
         }
         void piece_getmove(int board,int piece)
@@ -927,18 +939,21 @@ namespace fastChessEngine
                     piece_getmove_pawn(board,piece);
                     break;
                 case 1:
-                    piece_getmove_rook(board, piece);
+                    piece_getmove_rook(board, piece,1);
                     break;
                 case 2:
                     piece_getmove_knight(board, piece);
                     break;
                 case 3:
-                    piece_getmove_bishop(board, piece);
+                    piece_getmove_bishop(board, piece,3);
                     break;
                 case 4:
                     //queen
-                    piece_getmove_rook(board, piece);
-                    piece_getmove_bishop(board, piece);
+                    int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
+                    queencol = pieces[pointerP + 1];  //col
+                    queenrow = pieces[pointerP + 2];  //row
+                    piece_getmove_rook(board, piece,4);
+                    piece_getmove_bishop(board, piece,4);
                     break;
                 case 5:
                     piece_get_move_king(board,piece);
@@ -959,14 +974,14 @@ namespace fastChessEngine
                     {
                         if (x < 7)
                         {
-                            square_setsquare_feature(board, x + 1, y + 1, 0, 1);
+                            square_setsquare_feature(board, x + 1, y + 1, 0+side, 1);
                             checks_checkifitisking(board, x + 1, y + 1, x, y, piece,  0, side);
 
 
                         }
                         if (x > 0)
                         {
-                            square_setsquare_feature(board, x - 1, y + 1, 0, 1);
+                            square_setsquare_feature(board, x - 1, y + 1, 0 + side, 1);
                             checks_checkifitisking(board, x - 1, y + 1, x, y, piece, 0, side);
                         }
                     }
@@ -976,12 +991,12 @@ namespace fastChessEngine
                     {
                         if (x < 7)
                         {
-                            square_setsquare_feature(board, x + 1, y - 1, 0, 1);
+                            square_setsquare_feature(board, x + 1, y - 1, 0 + side, 1);
                             checks_checkifitisking(board, x + 1, y - 1, x, y, piece, 0, side);
                         }
                         if (x > 0)
                         {
-                            square_setsquare_feature(board, x - 1, y - 1, 0, 1);
+                            square_setsquare_feature(board, x - 1, y - 1, 0 + side, 1);
                             checks_checkifitisking(board, x - 1, y - 1, x, y, piece, 0, side);
                         }
                     }
@@ -1061,6 +1076,16 @@ namespace fastChessEngine
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
+            if (rook1col == -1)
+            {
+                rook1col = x;
+                rook1row = y;
+            }
+            else
+            {
+                rook2col = x;
+                rook2row = y;
+            }
             int side = pieces[pointerP + 4];
             int aa = 1;
             int bb = 0;
@@ -1152,6 +1177,8 @@ namespace fastChessEngine
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
+            
+
             int side = pieces[pointerP + 4];
             int aa = 1;
             int bb = 1;
@@ -1417,7 +1444,7 @@ namespace fastChessEngine
                 {
                     var typep = piece_getpiece_feature(board, piece, 0);
                     var side2 = piece_getpiece_feature(board, piece, 4);
-                    if ( (typep == 2 || typep == 4)&& side2 == side)
+                    if ( (typep == 3 || typep == 4)&& side2 == side)
                     {
                         diagleftup = true;
                     }
@@ -1448,7 +1475,7 @@ namespace fastChessEngine
                 {
                     var typep = piece_getpiece_feature(board, piece, 0);
                     var side2 = piece_getpiece_feature(board, piece, 4);
-                    if ((typep == 2 || typep == 4)&& side2 == side)
+                    if ((typep == 3 || typep == 4)&& side2 == side)
                     {
                         diagleftdown = true;
                     }
@@ -1486,7 +1513,7 @@ namespace fastChessEngine
                 {
                     var typep = piece_getpiece_feature(board, piece, 0);
                     var side2 = piece_getpiece_feature(board, piece, 4);
-                    if ((typep == 2 || typep == 4)&& side2 == side)
+                    if ((typep == 3 || typep == 4)&& side2 == side)
                     {
                         diagrightup = true;
                     }
@@ -1516,7 +1543,7 @@ namespace fastChessEngine
                 {
                     var typep = piece_getpiece_feature(board, piece, 0);
                     var side2 = piece_getpiece_feature(board, piece, 4);
-                    if  ((typep == 2 || typep == 4)&& side2 == side)
+                    if  ((typep == 3 || typep == 4)&& side2 == side)
                     {
                         diagrightdown = true;
                     }

@@ -54,6 +54,9 @@ namespace fastChessEngine
             this.button10 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.button13 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.x)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.y)).BeginInit();
@@ -290,7 +293,7 @@ namespace fastChessEngine
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(996, 12);
+            this.button12.Location = new System.Drawing.Point(961, 132);
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(156, 38);
             this.button12.TabIndex = 25;
@@ -298,11 +301,48 @@ namespace fastChessEngine
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "human",
+            "computer"});
+            this.comboBox1.Location = new System.Drawing.Point(961, 41);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(156, 24);
+            this.comboBox1.TabIndex = 26;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.SystemColors.InfoText;
+            this.comboBox2.ForeColor = System.Drawing.Color.Yellow;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "human",
+            "computer"});
+            this.comboBox2.Location = new System.Drawing.Point(961, 82);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(156, 24);
+            this.comboBox2.TabIndex = 27;
+            // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(438, 12);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(124, 40);
+            this.button13.TabIndex = 28;
+            this.button13.Text = "current eval";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1164, 620);
+            this.Controls.Add(this.button13);
+            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.button10);
@@ -346,7 +386,7 @@ namespace fastChessEngine
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button3;
+        public System.Windows.Forms.Button button3;
         private System.Windows.Forms.NumericUpDown x;
         private System.Windows.Forms.NumericUpDown y;
         private System.Windows.Forms.Button button4;
@@ -356,8 +396,8 @@ namespace fastChessEngine
         private System.Windows.Forms.NumericUpDown numericUpDown2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
+        public System.Windows.Forms.Button button6;
+        public System.Windows.Forms.Button button7;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button8;
@@ -365,6 +405,9 @@ namespace fastChessEngine
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Button button13;
     }
 }
 

@@ -21,6 +21,25 @@ namespace fastChessEngine
             boards = new int[totalnumberassign * 1 * totalboardfeatures];
             // 0=key,1=o_owhite , 2=o_o_owhite , 3=o_oblack , 4=o_o_oblack , 5=pointer(num of moves)
         }
+        int kingcol = -1;
+        int kingrow = -1;
+        int queencol = -1;
+        int queenrow = -1;
+        int rook1col = -1;
+        int rook1row = -1;
+        int rook2col = -1;
+        int rook2row = -1;
+        void board_setfeatureton1()
+        {
+             kingcol = -1;
+             kingrow = -1;
+             queencol = -1;
+             queenrow = -1;
+             rook1col = -1;
+             rook1row = -1;
+             rook2col = -1;
+             rook2row = -1;
+        }
         /// <summary>
         /// 0=key,1=o_owhite , 2=o_o_owhite , 3=o_oblack , 4=o_o_oblack , 5=pointer(num of moves)
         /// </summary>
@@ -42,6 +61,7 @@ namespace fastChessEngine
         public void board_copyboard(int board,int newboard)
         {
             //copy board features ##
+            board_setfeatureton1();
             var p = board * totalboardfeatures;
             var np = newboard * totalboardfeatures;
             for(int i = 0; i < totalboardfeatures; i++)
@@ -181,6 +201,22 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                 }
             }
         }
+        public bool board_arethermoves(int board, int side)
+        {
+            board_setboardfeature(board, 5,0);
+            for (int i = 0; i < 32; i++)
+            {
+                if (piece_getpiece_feature(board, i, 3) != -1 && (piece_getpiece_feature(board, i, 4) == side || side == -1))
+                {
+                    piece_getmove(board, i);
+                    if (board_getboardfeature(board, 5) != 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public void board_resetlongmovefirstpieces(int board)
         {
             for (int i = 0; i < 32; i++)
@@ -201,10 +237,30 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                 }
             }
         }
-        public double board_eval(int board,int side,int depth)
+        int infinity = 1000000;
+        public double board_eval(int board,int side,int depth,bool aretheremoves,int sidetomove)
         {
             double ans = 0;
             var d = 0;
+            if (!aretheremoves)
+            {
+                var numpieces = check_getcheckfeature(board, sidetomove, 0);
+                if (numpieces == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    if (sidetomove == side)
+                    {
+                        return -infinity - depth;
+                    }
+                    else
+                    {
+                        return infinity + depth;
+                    }
+                }
+            }
             for (int i = 0; i < 32; i++)
             {
                 if (piece_getpiece_feature(board, i, 3) != -1)
@@ -235,50 +291,72 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
 
             }
 
-            return ans/10+ depth/10;
+            return ans/10;
         }
-        long blackside = -54678908796543;
-        long blackside1 = -488782131846;
-        long whiteside = -2515153462;
-        long whiteside1 = -5684762624;
-        public long board_getkey(int board,int sidetomove,int sideh)
+        long blackside = 5464478908796543;
+        long blackside1 = 4846648782131846;
+        long whiteside = -251452145153462;
+        long whiteside1 = -56847452462624;
+
+        public long board_getkey(int board, int sidetomove, int sideh)
         {//very slow !! consumed around 30% of the time!!
+
             long key = 0;
-          //  for (int i = 0; i < 8; i++)
+            var side0 = 0;
+            var side1 = 1;
+            //  for (int i = 0; i < 8; i++)
+            var exis = 0;
+            for (int piece = 0; piece < 32; piece++)
             {
-                for (int piece = 0; piece < 32; piece++)
+                var exists = piece_getpiece_feature(board, piece, 3);
+                if (exists != -1)
                 {
-                    var exists = piece_getpiece_feature(board,piece,3);
-                    if (piece != -1)
+                    long keyy2 = 0;
+                    var side = piece_getpiece_feature(board, piece, 4);
+                    var col = piece_getpiece_feature(board, piece, 1) + 1;
+                    var row = piece_getpiece_feature(board, piece, 2) + 1;
+                    exis++;
+                    if (side == 0)
                     {
-                        long keyy2 = 0;
-                        var side = piece_getpiece_feature(board, piece, 4);
-                        var col = piece_getpiece_feature(board, piece, 1);
-                        var row = piece_getpiece_feature(board, piece, 2);
-                        switch (piece_getpiece_feature(board, piece, 0))
-                        {
-                            case 0:
-                                keyy2=zb.squares_pawn[col, row, side];
-                                break;
-                            case 1:
-                                keyy2 = zb.squares_Rook[col, row, side];
-                                break;
-                            case 2:
-                                keyy2 = zb.squares_Knight[col, row, side];
-                                break;
-                            case 3:
-                                keyy2 = zb.squares_Bishop[col, row, side];
-                                break;
-                            case 4:
-                                keyy2 = zb.squares_Queen[col, row, side];
-                                break;
-                            case 5:
-                                keyy2 = zb.squares_king[col, row, side];
-                                break;
-                        }
-                        key ^= keyy2;
+                        side0++;
                     }
+                    else
+                    {
+                        side1++;
+                    }
+                    if (col <= 0 || row <= 0)
+                    {
+
+                    }
+                    switch (piece_getpiece_feature(board, piece, 0))
+                    {
+                        case 0:
+                            keyy2 = zb.squares_pawn[col, row, side];
+                            break;
+                        case 1:
+                            keyy2 = zb.squares_Rook[col, row, side];
+                            break;
+                        case 2:
+                            keyy2 = zb.squares_Knight[col, row, side];
+                            break;
+                        case 3:
+                            keyy2 = zb.squares_Bishop[col, row, side];
+                            break;
+                        case 4:
+                            keyy2 = zb.squares_Queen[col, row, side];
+                            break;
+                        case 5:
+                            keyy2 = zb.squares_king[col, row, side];
+                            break;
+                        default:
+                            break;
+                    }
+                    key ^= keyy2;
                 }
+            }
+            if (exis < 3)
+            {
+
             }
             switch (sidetomove)
             {

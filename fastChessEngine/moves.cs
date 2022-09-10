@@ -110,8 +110,154 @@ namespace fastChessEngine
             }
             return ans;
         }
-         void move_createmove(int board ,int move,int castle,int longmove,int promotion,int x1,int y1,int x2,int y2,int piece,int part2,bool kingmove,bool pawn,ref int pointer,int side, int pawnside = 0)
+        int checkvalue = 1000;
+         void move_createmove(int board ,int move,int castle,int longmove,int promotion,int x1,int y1,int x2,int y2,int piece,int part2,bool kingmove,bool pawn,ref int pointer,int side,int type, int pawnside = 0)
         {
+            int getoawnthreats()
+            {
+                bool bb;
+                int pieceoc;
+                switch (side)
+                {
+                    case 0:
+                        if (y1 < 7)
+                        {
+                            if (x1 < 7)
+                            {
+                                if(x1+1==kingcol&& y1 + 1 == kingrow)
+                                {
+                                    return checkvalue;
+                                }
+                                bb= square_getsquare_feature(board, x1 + 1, y1 + 1, 2 + side)==1;
+                                if (bb)
+                                {
+                                     pieceoc = square_getsquare_feature(board, x1 + 1, y1 + 1, 4);
+                                     
+                                     return piece_getvalue(board, pieceoc);
+                                }
+                            }
+                            if (x1 > 0)
+                            {
+                                if (x1 - 1 == kingcol && y1 + 1 == kingrow)
+                                {
+                                    return checkvalue;
+                                }
+                                bb = square_getsquare_feature(board, x1 - 1, y1 + 1, 2 + side) == 1;
+                                if (bb)
+                                {
+                                    pieceoc = square_getsquare_feature(board, x1 - 1, y1 + 1, 4);
+
+                                    return piece_getvalue(board, pieceoc);
+                                }
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (y1 > 0)
+                        {
+                            if (x1 < 7)
+                            {
+                                if (x1 + 1 == kingcol && y1 - 1 == kingrow)
+                                {
+                                    return checkvalue;
+                                }
+                                bb = square_getsquare_feature(board, x1 + 1, y1 - 1, 2 + side) == 1;
+                                if (bb)
+                                {
+                                    pieceoc = square_getsquare_feature(board, x1 + 1, y1 - 1, 4);
+
+                                    return piece_getvalue(board, pieceoc);
+                                }
+                            }
+                            if (x1 > 0)
+                            {
+                                if (x1 - 1 == kingcol && y1 - 1 == kingrow)
+                                {
+                                    return checkvalue;
+                                }
+                                bb = square_getsquare_feature(board, x1 - 1, y1 - 1, 2 + side) == 1;
+                                if (bb)
+                                {
+                                    pieceoc = square_getsquare_feature(board, x1 - 1, y1 - 1, 4);
+
+                                    return piece_getvalue(board, pieceoc);
+                                }
+                            }
+                        }
+                        break;
+                }
+                return 0;
+            }
+            int getcapturevalforthreat()
+            {
+                int ans = 0;
+                int diffx = 0;
+                int diffy = 0;
+                switch (type)
+                {
+                    case 0:
+                        return getoawnthreats();
+                    case 1:
+                        if(kingcol==x1|| kingrow == y1)
+                        {
+                            return checkvalue;
+                        }
+                        break;
+                    case 2:
+                         diffx = kingcol - x1;
+                        if (diffx < 0)
+                        {
+                            diffx *= -1;
+                        }
+                         diffy = kingrow - y1;
+                        if (diffy < 0)
+                        {
+                            diffy *= -1;
+                        }
+                        if((diffx==2&&diffy==1)||(diffy==2&& diffx == 1))
+                        {
+                            return checkvalue;
+                        }
+                        break;
+                    case 3:
+                        diffx = kingcol - x1;
+                        if (diffx < 0)
+                        {
+                            diffx *= -1;
+                        }
+                        diffy = kingrow - y1;
+                        if (diffy < 0)
+                        {
+                            diffy *= -1;
+                        }
+                        if (diffx == diffy)
+                        {
+                            return checkvalue;
+                        }
+                        break;
+                    case 4:
+                        if (kingcol == x1 || kingrow == y1)
+                        {
+                            return checkvalue;
+                        }
+                        diffx = kingcol - x1;
+                        if (diffx < 0)
+                        {
+                            diffx *= -1;
+                        }
+                        diffy = kingrow - y1;
+                        if (diffy < 0)
+                        {
+                            diffy *= -1;
+                        }
+                        if (diffx == diffy)
+                        {
+                            return checkvalue;
+                        }
+                        break;
+                }
+                return ans;
+            }
             int numpieces = check_getcheckfeature(board, side, 0);
             if (!kingmove)
             {
@@ -151,6 +297,14 @@ namespace fastChessEngine
                     {
                         moves[pointer11 + 3] += piece_getvalue(board, part2);
                     }
+                    else
+                    {
+                        var pp = square_getsquare_feature(board, x1, y1, 4);
+                        if (pp != -1)
+                        {
+                            moves[pointer11 + 3] += piece_getvalue(board, pp) * 3;
+                        }
+                    }
                     board_increasepointer(board);
                     pointer++;
                     move++;
@@ -173,6 +327,15 @@ namespace fastChessEngine
                 {
                     moves[pointer11 + 3] += piece_getvalue(board, part2);
                 }
+                else
+                {
+                    var pp = square_getsquare_feature(board, x1, y1, 4) ;
+                    if (pp != -1)
+                    {
+                        moves[pointer11 + 3] += piece_getvalue(board, pp)*3;
+                    }
+                }
+                moves[pointer11 + 3] += getcapturevalforthreat();
                 board_increasepointer(board);
                 pointer++;
             }
@@ -234,12 +397,17 @@ namespace fastChessEngine
             }
             pieceChangePosition(board, piece, col, row);
         //    board_resetlongmovefirstpieces(board);//around 5% slower
+            
+            for(int i = 0; i < 32; i++)
+            {
+                piece_setpiece_feature(board, i, 6, 0);
+            }
             piece_setpiece_feature(board, piece, 6, longmove);
         }
         /// <summary>
         /// 0=castle,1=longmove,2=promotion,3=capturevalue,4=x1,5=y1,6=x2,7=y2,8=piece,9=part2
         /// </summary>
-         int move_getmove_feature(int board,int move,int feature)
+        public   int move_getmove_feature(int board,int move,int feature)
         {
             return moves[board * 200 * totalmovesFeatures + move * totalmovesFeatures + feature];
         }
