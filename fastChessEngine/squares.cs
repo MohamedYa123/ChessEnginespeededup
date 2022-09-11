@@ -10,6 +10,7 @@ namespace fastChessEngine
     {
         //let's beegin with the squares
         const int total_Squarefeatures=23;
+        const int total_controllers=15;
         //checked_white,checked_black,occupied_white,occupied_black,piece,rowCheckrightw,rowcheckleftw,rowCheckrightb,rowcheckleftb
         //colcheckupw,colcheckdownw,colcheckupb,colcheckdownb,diagonalcheckrightw,diagonalcheckleftw,diagonalcheckupw,diagonalcheckdownw
         //diagonalcheckrightb,diagonalcheckleftb,diagonalcheckupb,diagonalcheckdownb,wpoint,bbpoint
@@ -19,8 +20,8 @@ namespace fastChessEngine
         public ThinkerPro()
         {
             squares = new int[totalnumberassign * 8 * 8 * total_Squarefeatures];
-            wcontrolers = new int[totalnumberassign* 8* 8* 15];
-            bcontrolers = new int[totalnumberassign * 8 * 8 * 15];
+            wcontrolers = new int[totalnumberassign* 8* 8* total_controllers];
+            bcontrolers = new int[totalnumberassign * 8 * 8 * total_controllers];
             setboards();
             setchecks();
             setmoves();
@@ -76,7 +77,164 @@ namespace fastChessEngine
         {
             return board * 8 * 8 * total_Squarefeatures + (col * 8 + row * 1) * total_Squarefeatures;
         }
+        void square_addcontroller(int board, int col, int row, int side, int val)
+        {
+            int pointr = square_getsquare_feature(board, col, row, 21 + side);
+            if (side == 0) {
+                wcontrolers[board * 8 * 8 * total_Squarefeatures + (col * 8 + row * 1) * total_controllers + pointr]=val;
+            }
+            else
+            {
+                bcontrolers[board * 8 * 8 * total_Squarefeatures + (col * 8 + row * 1) * total_controllers + pointr] = val;
+            }
+            square_setsquare_feature(board, col, row, 21 + side, pointr + 1);
+        }
+        public int square_getcapture(int board,int col,int row,int whotoplay)
+        {
+            var piece = square_getsquare_feature(board, col, row, 4);
+            if (piece == -1)
+            {
+                return 0;
+            }
+            var pieceside = piece_getpiece_feature(board, piece, 4);
+            var piecevalue = piece_getvalue(board, piece);
+            return square_getcaptureByPiece( board,  col,  row,  whotoplay,  pieceside,  piecevalue);
+        }
+        public int square_getcaptureByPiece(int board,int col,int row,int whotoplay,int pieceside,int piecevalue)
+        {
+            if (pieceside == whotoplay)
+            {
+                return 0;
+            }
+            int wpoint= square_getsquare_feature(board, col, row, 21);
+            int bpoint= square_getsquare_feature(board, col, row, 22);
+            int mtn = 0;
+            if (whotoplay == 1)
+            {
+                if (wpoint == 0 || bpoint == 0)
+                {
+                    if (bpoint == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return -piecevalue;
+                    }
 
+                }
+                int[] BlackControlers = new int[total_controllers];
+                var partf = board * 8 * 8 * total_Squarefeatures + (col * 8 + row * 1) * total_controllers;
+                for (int i = 0; i < bpoint; i++)
+                {
+                    BlackControlers[i] = bcontrolers[partf+i];
+                }
+                for (int i = bpoint; i < total_controllers; i++)
+                {
+                    BlackControlers[i] = 10000;
+                }
+                int[] WhiteControlers = new int[total_controllers];
+                for (int i = 0; i < bpoint; i++)
+                {
+                    WhiteControlers[i] = wcontrolers[partf + i];
+                }
+                for (int i = wpoint; i < total_controllers; i++)
+                {
+                    WhiteControlers[i] = 10000;
+                }
+                Array.Sort(BlackControlers);
+                Array.Sort(WhiteControlers);
+                if (pieceside == whotoplay)
+                {
+                    return 0;
+                }
+                int r = 0;
+                for (int i = 0; i < bpoint; i++)
+                {
+                    r = i;
+                    mtn += BlackControlers[i];
+                    if (i < wpoint)
+                    { mtn -= WhiteControlers[i]; }
+                    else { break; }
+
+                }
+                if (wpoint >= bpoint)
+                {
+                    mtn += WhiteControlers[r];
+                }
+                else
+                {
+                    mtn -= BlackControlers[r];
+                }
+            }
+            else
+            {
+                if (wpoint == 0 || bpoint == 0)
+                {
+                    if (wpoint == 0)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return -piecevalue;
+                    }
+
+                }
+
+                int[] BlackControlers = new int[total_controllers];
+                var partf = board * 8 * 8 * total_Squarefeatures + (col * 8 + row * 1) * total_controllers;
+                for (int i = 0; i < bpoint; i++)
+                {
+                    BlackControlers[i] = bcontrolers[partf + i];
+                }
+                for (int i = bpoint; i < total_controllers; i++)
+                {
+                    BlackControlers[i] = 10000;
+                }
+                int[] WhiteControlers = new int[total_controllers];
+                for (int i = 0; i < bpoint; i++)
+                {
+                    WhiteControlers[i] = wcontrolers[partf + i];
+                }
+                for (int i = wpoint; i < total_controllers; i++)
+                {
+                    WhiteControlers[i] = 10000;
+                }
+                Array.Sort(BlackControlers);
+                Array.Sort(WhiteControlers);
+                if (pieceside == whotoplay)
+                {
+                    return 0;
+                }
+                int r = 0;
+                for (int i = 0; i < wpoint; i++)
+                {
+                    r = i;
+                    mtn += WhiteControlers[i];
+                    if (i < bpoint)
+                    { mtn -= BlackControlers[i]; }
+                    else { break; }
+
+                }
+                if (bpoint >= wpoint)
+                {
+                    mtn += BlackControlers[r];
+                }
+                else
+                {
+                    mtn -= WhiteControlers[r];
+                }
+            }
+            if (mtn - piecevalue < 0)
+            {
+                return -piecevalue;
+            }
+            else
+            {
+                return 0;
+            }
+        }
         void squaresetoccupy(int board,int piece,int col,int row)
         {
             int part = square_getpart(board, col, row);

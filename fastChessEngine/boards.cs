@@ -21,8 +21,8 @@ namespace fastChessEngine
             boards = new int[totalnumberassign * 1 * totalboardfeatures];
             // 0=key,1=o_owhite , 2=o_o_owhite , 3=o_oblack , 4=o_o_oblack , 5=pointer(num of moves)
         }
-        int kingcol = -1;
-        int kingrow = -1;
+        int kingcolp = -1;
+        int kingrowp = -1;
         int queencol = -1;
         int queenrow = -1;
         int rook1col = -1;
@@ -31,8 +31,8 @@ namespace fastChessEngine
         int rook2row = -1;
         void board_setfeatureton1()
         {
-             kingcol = -1;
-             kingrow = -1;
+            kingcolp = -1;
+            kingrowp = -1;
              queencol = -1;
              queenrow = -1;
              rook1col = -1;
@@ -270,7 +270,8 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                     {
                         d++;
                     }
-                    if (piece_getpiece_feature(board, i, 4) == side)
+                    var pieceside = piece_getpiece_feature(board, i, 4);
+                    if (pieceside == side)
                     {
                         ans += a;
                     }
@@ -278,6 +279,9 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                     {
                         ans -= a;
                     }
+                    var col = piece_getpiece_feature(board, i, 1);
+                    var row = piece_getpiece_feature(board, i, 2);
+                    ans += square_getcaptureByPiece(board, col, row, sidetomove, pieceside, a);
                 }
             }
             if (d != 2)

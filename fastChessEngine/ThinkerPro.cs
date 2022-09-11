@@ -131,7 +131,7 @@ namespace fastChessEngine
                 branchesfound++;
                 //board_getallmoves(board, sidetomove);
                 //var eval = board_eval(board, side);
-                board_getallchecks(board, 1 - sidetomove);
+                board_getallchecks(board, -1);
                 prevpathway.Remove(key);
                 return getevalorpushlite(board,side,key,depth, board_arethermoves(board,sidetomove));
 

@@ -108,6 +108,7 @@ namespace fastChessEngine
                 }
                 
             }
+            ans +=" capturevalue : "+ move_getmove_feature(board, move, 3) + " ";
             return ans;
         }
         int checkvalue = 1000;
@@ -124,7 +125,7 @@ namespace fastChessEngine
                         {
                             if (x1 < 7)
                             {
-                                if(x1+1==kingcol&& y1 + 1 == kingrow)
+                                if(x1+1==kingcolp&& y1 + 1 == kingrowp)
                                 {
                                     return checkvalue;
                                 }
@@ -138,7 +139,7 @@ namespace fastChessEngine
                             }
                             if (x1 > 0)
                             {
-                                if (x1 - 1 == kingcol && y1 + 1 == kingrow)
+                                if (x1 - 1 == kingcolp && y1 + 1 == kingrowp)
                                 {
                                     return checkvalue;
                                 }
@@ -157,7 +158,7 @@ namespace fastChessEngine
                         {
                             if (x1 < 7)
                             {
-                                if (x1 + 1 == kingcol && y1 - 1 == kingrow)
+                                if (x1 + 1 == kingcolp && y1 - 1 == kingrowp)
                                 {
                                     return checkvalue;
                                 }
@@ -171,7 +172,7 @@ namespace fastChessEngine
                             }
                             if (x1 > 0)
                             {
-                                if (x1 - 1 == kingcol && y1 - 1 == kingrow)
+                                if (x1 - 1 == kingcolp && y1 - 1 == kingrowp)
                                 {
                                     return checkvalue;
                                 }
@@ -190,6 +191,7 @@ namespace fastChessEngine
             }
             int getcapturevalforthreat()
             {
+
                 int ans = 0;
                 int diffx = 0;
                 int diffy = 0;
@@ -198,54 +200,156 @@ namespace fastChessEngine
                     case 0:
                         return getoawnthreats();
                     case 1:
-                        if(kingcol==x1|| kingrow == y1)
+                        if(kingcolp==x1|| kingrowp == y1)
                         {
                             return checkvalue;
                         }
                         break;
                     case 2:
-                         diffx = kingcol - x1;
+                        diffx = kingcolp - x1;
                         if (diffx < 0)
                         {
                             diffx *= -1;
                         }
-                         diffy = kingrow - y1;
+                         diffy = kingrowp - y1;
                         if (diffy < 0)
                         {
                             diffy *= -1;
                         }
                         if((diffx==2&&diffy==1)||(diffy==2&& diffx == 1))
                         {
-                            return checkvalue;
+                            ans+= checkvalue;
+                        }
+                        if (queencol != -1)
+                        {
+                            diffx = queencol - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = queenrow - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if ((diffx == 2 && diffy == 1) || (diffy == 2 && diffx == 1))
+                            {
+                                ans += 90;
+                            }
+                        }
+                        if (rook1col != -1)
+                        {
+                            diffx = rook1col - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = rook1row - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if ((diffx == 2 && diffy == 1) || (diffy == 2 && diffx == 1))
+                            {
+                                ans += 50;
+                            }
+                        }
+                        if (rook2col != -1)
+                        {
+                            diffx = rook2col - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = rook2row - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if ((diffx == 2 && diffy == 1) || (diffy == 2 && diffx == 1))
+                            {
+                                ans += 50;
+                            }
                         }
                         break;
                     case 3:
-                        diffx = kingcol - x1;
+                        diffx = kingcolp - x1;
                         if (diffx < 0)
                         {
                             diffx *= -1;
                         }
-                        diffy = kingrow - y1;
+                        diffy = kingrowp - y1;
                         if (diffy < 0)
                         {
                             diffy *= -1;
                         }
                         if (diffx == diffy)
                         {
-                            return checkvalue;
+                            ans+= checkvalue;
+                        }
+                        if (queencol != -1)
+                        {
+                            diffx = queencol - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = queenrow - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if (diffx == diffy)
+                            {
+                                ans += 90;
+                            }
+                        }
+                        if (rook1col != -1)
+                        {
+                            diffx = rook1col - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = rook1row - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if (diffx == diffy)
+                            {
+                                ans += 50;
+                            }
+                        }
+                        if (rook2col != -1)
+                        {
+                            diffx = rook2col - x1;
+                            if (diffx < 0)
+                            {
+                                diffx *= -1;
+                            }
+                            diffy = rook2row - y1;
+                            if (diffy < 0)
+                            {
+                                diffy *= -1;
+                            }
+                            if (diffx == diffy)
+                            {
+                                ans += 50;
+                            }
                         }
                         break;
                     case 4:
-                        if (kingcol == x1 || kingrow == y1)
+                        if (kingcolp == x1 || kingrowp == y1)
                         {
                             return checkvalue;
                         }
-                        diffx = kingcol - x1;
+                        diffx = kingcolp - x1;
                         if (diffx < 0)
                         {
                             diffx *= -1;
                         }
-                        diffy = kingrow - y1;
+                        diffy = kingrowp - y1;
                         if (diffy < 0)
                         {
                             diffy *= -1;
@@ -302,7 +406,7 @@ namespace fastChessEngine
                         var pp = square_getsquare_feature(board, x1, y1, 4);
                         if (pp != -1)
                         {
-                            moves[pointer11 + 3] += piece_getvalue(board, pp) * 3;
+                            moves[pointer11 + 3] += piece_getvalue(board, pp) * 5;
                         }
                     }
                     board_increasepointer(board);
@@ -332,7 +436,7 @@ namespace fastChessEngine
                     var pp = square_getsquare_feature(board, x1, y1, 4) ;
                     if (pp != -1)
                     {
-                        moves[pointer11 + 3] += piece_getvalue(board, pp)*3;
+                        moves[pointer11 + 3] += piece_getvalue(board, pp)*5;
                     }
                 }
                 moves[pointer11 + 3] += getcapturevalforthreat();

@@ -272,8 +272,10 @@ namespace fastChessEngine
 
         private void button13_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(th.board_eval(0, 0, 1, true, 1) + " "+th.positionslist[th.board_getkey(0,1,0)][0]);
+            th.board_getallchecks(0,-1);
+            MessageBox.Show(th.board_eval(0, 0, 1, true, 1) + " ");// +th.positionslist[th.board_getkey(0,1,0)][0]);
         }
     }
 
 }
+ 

@@ -167,19 +167,22 @@ namespace fastChessEngine
                     piece_getpawnchecks(board, piece);
                     break;
                 case 1:
-                    piece_getrookchecks(board, piece);
+                    piece_getrookchecks(board, piece,true);
                     
                     break;
                 case 2:
                     piece_getknightchecks(board, piece);
                     break;
                 case 3:
-                    piece_getbishopchecks(board, piece);
+                    piece_getbishopchecks(board, piece,true);
                     break;
                 case 4:
                     //queen
-                    piece_getrookchecks(board, piece);
-                    piece_getbishopchecks(board, piece);
+                    int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
+                    queencol = pieces[pointerP + 1];  //col
+                    queenrow = pieces[pointerP + 2];  //row
+                    piece_getrookchecks(board, piece,false);
+                    piece_getbishopchecks(board, piece,false);
                     break;
                 case 5:
                     piece_getkingchecks(board, piece);
@@ -206,8 +209,6 @@ namespace fastChessEngine
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
-            kingcol = x;
-            kingrow = y;
             int side = pieces[pointerP + 4];
             bool nevermoved = pieces[pointerP + 5]==1;
             //get check
@@ -949,9 +950,6 @@ namespace fastChessEngine
                     break;
                 case 4:
                     //queen
-                    int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
-                    queencol = pieces[pointerP + 1];  //col
-                    queenrow = pieces[pointerP + 2];  //row
                     piece_getmove_rook(board, piece,4);
                     piece_getmove_bishop(board, piece,4);
                     break;
@@ -976,13 +974,14 @@ namespace fastChessEngine
                         {
                             square_setsquare_feature(board, x + 1, y + 1, 0+side, 1);
                             checks_checkifitisking(board, x + 1, y + 1, x, y, piece,  0, side);
-
+                            square_addcontroller(board, x + 1, y + 1, side, 10);
 
                         }
                         if (x > 0)
                         {
                             square_setsquare_feature(board, x - 1, y + 1, 0 + side, 1);
                             checks_checkifitisking(board, x - 1, y + 1, x, y, piece, 0, side);
+                            square_addcontroller(board, x - 1, y + 1, side, 10);
                         }
                     }
                     break;
@@ -993,11 +992,13 @@ namespace fastChessEngine
                         {
                             square_setsquare_feature(board, x + 1, y - 1, 0 + side, 1);
                             checks_checkifitisking(board, x + 1, y - 1, x, y, piece, 0, side);
+                            square_addcontroller(board, x + 1, y - 1, side, 10);
                         }
                         if (x > 0)
                         {
                             square_setsquare_feature(board, x - 1, y - 1, 0 + side, 1);
                             checks_checkifitisking(board, x - 1, y - 1, x, y, piece, 0, side);
+                            square_addcontroller(board, x - 1, y - 1, side, 10);
                         }
                     }
                     break;
@@ -1069,19 +1070,25 @@ namespace fastChessEngine
                         checks_checkifitisking(board, n_0, n_1, x, y, piece, 0, side);
                         break;
                 }
+                square_addcontroller(board, n_0, n_1, side, 30);
             }
         }
-        void piece_getrookchecks(int board,int piece)
+        void piece_getrookchecks(int board,int piece,bool notqueen)
         {
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
-            if (rook1col == -1)
+            int valm = 90;
+            if (notqueen)
+            {
+                valm = 50;
+            }
+            if (rook1col == -1&& notqueen)
             {
                 rook1col = x;
                 rook1row = y;
             }
-            else
+            else if (notqueen)
             {
                 rook2col = x;
                 rook2row = y;
@@ -1152,7 +1159,8 @@ namespace fastChessEngine
                     square_litefeature_assign(part, side, 1);
                  //    p = square_getsquare_feature(board, x, y, 4);
                     square_litefeature_assign(part,feature2+ side*2, 1);
-                  //  p = square_getsquare_feature(board, x, y, 4);
+                    square_addcontroller(board, i, i2, side, valm);
+                    //  p = square_getsquare_feature(board, x, y, 4);
                     if (ocupiedblack || ocupiedwhite)
                     {
                         var occup = square_litefeature_extractor(part, 4);
@@ -1172,13 +1180,16 @@ namespace fastChessEngine
                 }
             }
         }
-        void piece_getbishopchecks(int board,int piece)
+        void piece_getbishopchecks(int board,int piece,bool notqueen)
         {
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
-            
-
+            int valm = 90;
+            if (notqueen)
+            {
+                valm = 32;
+            }
             int side = pieces[pointerP + 4];
             int aa = 1;
             int bb = 1;
@@ -1242,6 +1253,7 @@ namespace fastChessEngine
                     bool ocupiedblack = square_litefeature_extractor(part, 3) == 1;
                     square_litefeature_assign(part, side, 1);
                     square_litefeature_assign(part, feature2 + side * 2, 1);
+                    square_addcontroller(board, i, i2, side, valm);
                     if (ocupiedblack || ocupiedwhite)
                     {
                         var occup = square_litefeature_extractor(part, 4);
@@ -1267,6 +1279,8 @@ namespace fastChessEngine
             int pointerP = board * piecesperboard * totalPiecesFeatures + piece * totalPiecesFeatures;
             int x = pieces[pointerP + 1];  //col
             int y = pieces[pointerP + 2];  //row
+            kingcolp = x;
+            kingrowp = y;
             int side = pieces[pointerP + 4];
             for (int i = -1; i < 2; i++)
             {
@@ -1279,6 +1293,7 @@ namespace fastChessEngine
                         continue;
                     }
                     square_setsquare_feature(board, xv, yv, side, 1);
+                    square_addcontroller(board, xv, yv, side, 200);
                 }
 
             }
