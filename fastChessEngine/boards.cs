@@ -281,12 +281,11 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                     }
                     var col = piece_getpiece_feature(board, i, 1);
                     var row = piece_getpiece_feature(board, i, 2);
-                    var cap= square_getcaptureByPiece(board, col, row, sidetomove, pieceside, a);
-                    if (cap < 0 && pieceside!=side)
+                    if (pieceside == side)
                     {
-                      //  cap *= -1;
+                        var cap = square_getcaptureByPiece(board, col, row, sidetomove, pieceside, a);
+                        ans += cap;
                     }
-                    ans += cap;
                 }
             }
             if (d != 2)
