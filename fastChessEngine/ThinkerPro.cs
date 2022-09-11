@@ -133,6 +133,7 @@ namespace fastChessEngine
                 //var eval = board_eval(board, side);
                 board_getallchecks(board, -1);
                 prevpathway.Remove(key);
+               // return 0;
                 return getevalorpushlite(board,side,key,depth, board_arethermoves(board,sidetomove));
 
             }
