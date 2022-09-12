@@ -112,7 +112,7 @@ namespace fastChessEngine
             return ans;
         }
         int checkvalue = 1000;
-         void move_createmove(int board ,int move,int castle,int longmove,int promotion,int x1,int y1,int x2,int y2,int piece,int part2,bool kingmove,bool pawn,ref int pointer,int side,int type, int pawnside = 0)
+         void move_createmove(int board ,int move,int castle,int longmove,int promotion,int x1,int y1,int x2,int y2,int piece,int part2,bool kingmove,bool pawn,ref int pointer,int side,int type,int ccol,int crow)
         {
             int getoawnthreats()
             {
@@ -382,7 +382,7 @@ namespace fastChessEngine
             {
                 return;
             }
-            if (pawn && ((side == 0 && y1 == 7) || (side == 1 && y1 == 0)))
+            if ( pawn && ((side == 0 && y1 == 7) || (side == 1 && y1 == 0)))
             {
                 for(int i = 4; i >0; i--)
                 {
@@ -396,7 +396,7 @@ namespace fastChessEngine
                     moves[pointer11 + 7] = y2;
                     moves[pointer11 + 8] = piece;
                     moves[pointer11 + 9] = part2;
-                    moves[pointer11 + 3] = getvalue(i);
+                    moves[pointer11 + 3] = getvalue(i)*30;
                     if (part2 != -1)
                     {
                         moves[pointer11 + 3] += piece_getvalue(board, part2);
@@ -406,7 +406,7 @@ namespace fastChessEngine
                         var pp = square_getsquare_feature(board, x1, y1, 4);
                         if (pp != -1)
                         {
-                            moves[pointer11 + 3] += piece_getvalue(board, pp) * 5;
+                            moves[pointer11 + 3] += piece_getvalue(board, pp) * 50;
                         }
                     }
                     board_increasepointer(board);
@@ -426,20 +426,29 @@ namespace fastChessEngine
                 moves[pointer11 + 7] = y2;
                 moves[pointer11 + 8] = piece;
                 moves[pointer11 + 9] = part2;
-                moves[pointer11 + 3] = piece_getvalue(board, piece);
+                int cap = square_getcapture(board, ccol, crow, 1 - side);
+                if (cap < 0 && type!=0)
+                {
+                    moves[pointer11 + 3] = piece_getvalue(board, piece) * 50;
+                }
+                else
+                {
+                    moves[pointer11 + 3] = piece_getvalue(board, piece) * 30;
+                }
+                
                 if (part2 != -1)
                 {
-                    moves[pointer11 + 3] += piece_getvalue(board, part2);
+                    moves[pointer11 + 3] += piece_getvalue(board, part2)*50;
                 }
                 else
                 {
                     var pp = square_getsquare_feature(board, x1, y1, 4) ;
                     if (pp != -1)
                     {
-                        moves[pointer11 + 3] += piece_getvalue(board, pp)*5;
+                        moves[pointer11 + 3] += piece_getvalue(board, pp)*50;
                     }
                 }
-                moves[pointer11 + 3] += getcapturevalforthreat();
+              //  moves[pointer11 + 3] += getcapturevalforthreat();
                 board_increasepointer(board);
                 pointer++;
             }

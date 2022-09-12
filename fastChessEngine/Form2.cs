@@ -192,6 +192,7 @@ namespace fastChessEngine
             th.board_putpiecesinsquares(0);
             sp.Start();
             pathway pth = new pathway();
+            th.richt1 = richTextBox1;
             var eval = th.search(csc % 2, (csc) % 2, th.depthM, 0, checkBox1.Checked);
             sp.Stop();
             th.board_setboardfeature(0, 5, 0);
@@ -200,8 +201,8 @@ namespace fastChessEngine
             boards.Add(boards.Count + 1000);
             index = boards.Count + 1000;
             th.board_setboardfeature(0, 5, 0);
-            richTextBox1.Text = "";
-            th.board_tostring(0, richTextBox1);
+         //   richTextBox1.Text = "";
+        //    th.board_tostring(0, richTextBox1);
             try
             {
                 f.button1.PerformClick();

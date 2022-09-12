@@ -73,7 +73,7 @@ namespace fastChessEngine
             //reset squares
             board_resetallsquares(newboard);
             //copypieces
-            for(int i = 0; i < 32; i++)
+            for (int i = 0; i < 32; i++)
             {
                 piece_copytonewpiece(board, newboard, i);
             }
@@ -81,6 +81,7 @@ namespace fastChessEngine
         public string board_tostring(int board,RichTextBox rtc=null)
         {
             string ans = "";
+            rtc.Text = "";
             Color c=Color.White;
             for(int i = 7; i >-1; i--)
             {
@@ -266,7 +267,7 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                 if (piece_getpiece_feature(board, i, 3) != -1)
                 {
                     var a= piece_getvalue(board, i);
-                    if (a == 40)
+                    if (a == 4)
                     {
                         d++;
                     }
@@ -293,18 +294,22 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                 var al = piece_getpiece_feature(board, 12, 3);
                 var aal = piece_getpiece_feature(board, 28, 3);
                 var aalk = piece_getpiece_feature(board, 28, 0);
+                richt1.Text = "";
+                board_tostring(board, richt1);
+                return -12345;
             }
             else if (d == 2)
             {
 
             }
 
-            return ans/10;
+            return ans/5-Convert.ToDouble(depthM- depth)/10;
         }
-        long blackside = 5464478908796543;
-        long blackside1 = 4846648782131846;
-        long whiteside = -251452145153462;
-        long whiteside1 = -56847452462624;
+        public RichTextBox richt1;
+        long blackside = -54678908796543;
+        long blackside1 = -488782131846;
+        long whiteside = -2515153462;
+        long whiteside1 = -5684762624;
 
         public long board_getkey(int board, int sidetomove, int sideh)
         {//very slow !! consumed around 30% of the time!!
@@ -361,6 +366,7 @@ square_reset_square(board,7, 4);square_reset_square(board,7, 5);square_reset_squ
                     }
                     key ^= keyy2;
                 }
+
             }
             if (exis < 3)
             {

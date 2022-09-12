@@ -1,7 +1,9 @@
 ﻿ using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace fastChessEngine
@@ -16,6 +18,7 @@ namespace fastChessEngine
         // int Blocks=70;
         // int blocksize = 10000;
         public int branchesfound = 0;
+        ConcurrentStack<int> freeboardreadyforreset = new ConcurrentStack<int>();
         Stack<int> freeboard=new Stack<int>();
         public int depthM;
         public int bestmove;
@@ -29,6 +32,40 @@ namespace fastChessEngine
         public void putrepeatedposition(long keyg)
         {
             repeatedpositions.Add(keyg, 0);
+        }
+        void boardresetter()
+        {
+            while (true)
+            {
+                if (freeboardreadyforreset.Count > 0)
+                {
+                    int f;
+                    if (freeboardreadyforreset.TryPop(out f))
+                    {
+                        board_resetallsquares(f);
+                        check_resetme(f);
+                        freeboard.Push(f);
+                    }
+                }
+                Thread.Sleep(1);
+            }
+        }
+        object lockobj = new object();
+        void pushfreeboard(int board)
+        {
+            freeboardreadyforreset.Push(board);
+        }
+        int getfreeboard()
+        {
+            lock (lockobj)
+            {
+                int res=0;
+                //while(! freeboard.TryPop(out res))
+                //{
+
+                //}
+                return res;
+            }
         }
         public  Dictionary<long, double[]> positionslist = new Dictionary<long, double[]>();//after evaluating a position we save it here
         Dictionary<long, pathway> positionspaths = new Dictionary<long, pathway>();//after evaluating a position we save it here
@@ -70,6 +107,7 @@ namespace fastChessEngine
                 {
                     double[] evalanddepth = { board_eval(boardfull,sidefull,depthfull, aretheremoves, sidetomove), depthfull };
                     positionslist.Add(keyfull, evalanddepth);
+                    return evalanddepth[0];
                  //   positionspaths.Add(keyfull, pthc);
                 }
                 else
@@ -97,9 +135,13 @@ namespace fastChessEngine
                 {
                     if (i != board)
                     {
+                        board_resetallsquares(i);
+                        check_resetme(i);
                         freeboard.Push(i);
                     }
                 }
+                Thread th = new Thread(() => boardresetter());
+             //   th.Start();
             }
             depthhere = depth;
             boardhere = board;
@@ -108,12 +150,13 @@ namespace fastChessEngine
             if (repeatedpositions.ContainsKey(key) || prevpathway.ContainsKey(key))
             {
                 freeboard.Push(board);
+                branchesfound++;
                 return 0;
             }
             prevpathway.Add(key, 0);
             if (positionslist.ContainsKey(key) && positionslist[key][1] >= depth)
             {
-              //  var cdepth = positionslist[key][1];
+                //  var cdepth = positionslist[key][1];
                 //if (depth > 3)
                 //{
                 //    var fh = positionslist[key][1];
@@ -143,12 +186,16 @@ namespace fastChessEngine
             int nummoves = board_getboardfeature(board, 5);
             int[] movesindices = new int[nummoves];
             int[] capturevalues = new int[nummoves];
+            string[] sad = new string[nummoves];
             for(int i = 0; i < nummoves; i++)
             {
                 movesindices[i] = i;
                 capturevalues[i] = -1*move_getmove_feature(board, i, 3);
+                sad[i] = move_to_string(board, i);
             }
             Array.Sort(capturevalues, movesindices);
+            //  Array.Sort(capturevalues, sad);
+
             double besteval = -1000000000;
             //  move bestmove;
             if (sidetomove != side)
@@ -172,10 +219,10 @@ namespace fastChessEngine
             for (int t = 0; t < nummoves; t++)
             {
                 int br = movesindices[t];
-               // var move = move_to_string(board, br);
-               // bool yes = false;
-              //  var ls = lastmove;
-              //  //var ev = 0.0;
+                // var move = move_to_string(board, br);
+                // bool yes = false;
+                //  var ls = lastmove;
+                //  //var ev = 0.0;
                 //if (move == "Kb7" && lastmove== "Kd3")
                 //{
                 //    ev = board_eval(board, side, depth, true, sidetomove);
@@ -184,7 +231,7 @@ namespace fastChessEngine
                 //if (depth == depthM)
                 //{ sequencemoves.Clear(); }
                 //h
-                int newboard = freeboard.Pop();
+                int newboard = freeboard.Pop();// getfreeboard();
                 board_copyboard(board, newboard);
                 move_aplymove(newboard, br,board);
                 //pathway pth3 = new pathway();
@@ -192,35 +239,18 @@ namespace fastChessEngine
                 //pth.child = pth3;
                // lastmove = br;
                 var eval= search(side, 1 - sidetomove, depth - 1, newboard, withalphabeta, alpha2,beta2);
+                if (eval == -12345)
+                {
+                    if (depth == 3)
+                    {
+                        board_tostring(board, richt1);
+                    }
+                    return eval;
+                }
                 //if (move.Contains("x") )
                 //{
 
                 //}
-                switch (depth)
-                {
-                    case 28:
-                        break;
-                    case 27:
-                        break;
-                    case 26:
-                        break;
-                    case 25:
-                        break;
-                    case 24:
-                        break;
-                    case 23:
-                        break;
-                    case 22:
-                        break;
-                    case 21:
-                        break;
-                    case 12:
-                        break;
-                    case 11:
-                        break;
-                    case 10:
-                        break;
-                }
                 //if ( yes && sidetomove==1&&ev<2)
                 //{
                     
